@@ -2,6 +2,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+const JWT_SECRET = 'jwtSecret'; // In a real app, this should be in an environment variable
+const JWT_EXPIRATION = '100h'; // Use a string for time representation
+const BCRYPT_SALT_ROUNDS = 10;
+
 class UserService {
   async register(userData) {
     const { name, email, password, userType } = userData;
@@ -18,7 +22,7 @@ class UserService {
       userType,
     });
 
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(BCRYPT_SALT_ROUNDS);
     user.password = await bcrypt.hash(password, salt);
 
     await user.save();
@@ -29,7 +33,7 @@ class UserService {
       },
     };
 
-    const token = jwt.sign(payload, 'jwtSecret', { expiresIn: 360000 });
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRATION });
     return { token };
   }
 
@@ -52,7 +56,7 @@ class UserService {
       },
     };
 
-    const token = jwt.sign(payload, 'jwtSecret', { expiresIn: 360000 });
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRATION });
     return { token };
   }
 

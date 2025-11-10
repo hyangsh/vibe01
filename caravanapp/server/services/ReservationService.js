@@ -1,10 +1,19 @@
 const Reservation = require('../models/Reservation');
 const Caravan = require('../models/Caravan');
 
+const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
+
 class ReservationService {
   constructor(reservationValidator, reservationRepository) {
     this.reservationValidator = reservationValidator;
     this.reservationRepository = reservationRepository;
+  }
+
+  _calculateTotalPrice(startDate, endDate, dailyRate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const durationInDays = (end - start) / MILLISECONDS_PER_DAY;
+    return durationInDays * dailyRate;
   }
 
   async createReservation(userId, reservationData) {
@@ -19,9 +28,11 @@ class ReservationService {
       caravan,
       startDate,
       endDate,
-      totalPrice:
-        ((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) *
-        caravanToBook.dailyRate,
+      totalPrice: this._calculateTotalPrice(
+        startDate,
+        endDate,
+        caravanToBook.dailyRate
+      ),
     });
 
     const reservation = await newReservation.save();

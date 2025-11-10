@@ -31,7 +31,7 @@ class ReservationRepository {
     }
   }
 
-  findOverlap(caravanId, startDate, endDate) {
+  findOverlappingReservation(caravanId, startDate, endDate) {
     const caravanReservations = this.reservationsByCaravan.get(caravanId.toString());
     if (!caravanReservations) {
       return null; // No reservations for this caravan

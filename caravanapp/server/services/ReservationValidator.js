@@ -25,7 +25,7 @@ class ReservationValidator {
   }
 
   validateAvailability(caravanId, startDate, endDate) {
-    const existingReservation = this.reservationRepository.findOverlap(
+    const existingReservation = this.reservationRepository.findOverlappingReservation(
       caravanId,
       startDate,
       endDate
