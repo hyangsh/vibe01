@@ -1,16 +1,81 @@
-# React + Vite
+# CaravanShare: 카라반 공유 플랫폼
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 프로젝트 소개
 
-Currently, two official plugins are available:
+CaravanShare는 카라반(캠핑카)을 소유한 사람(호스트)과 이를 이용하고 싶은 사람(게스트)을 연결해주는 혁신적인 공유 플랫폼입니다. 유휴 자산의 효율적인 활용을 통해 호스트에게는 추가 수익을, 게스트에게는 저렴하고 특별한 여행 경험을 제공하며, 사용자 간의 신뢰를 기반으로 하는 커뮤니티를 지향합니다.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 주요 기능 (MVP)
 
-## React Compiler
+### 1. 사용자 관리
+- **회원가입:** 호스트 또는 게스트로 구분하여 가입할 수 있습니다.
+- **프로필 관리:** 사용자 프로필 정보(이름, 연락처 등)를 관리합니다.
+- **인증/인가:** 안전한 로그인을 위한 인증 및 권한 관리 시스템을 제공합니다.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 2. 카라반 정보 관리
+- **카라반 등록:** 호스트는 자신의 카라반 정보를 상세하게 등록할 수 있습니다 (수용 인원, 편의시설, 사진, 위치 등).
+- **카라반 검색/조회:** 게스트는 원하는 조건에 맞는 카라반을 검색하고 상세 정보를 조회할 수 있습니다.
+- **카라반 상태 관리:** 카라반의 현재 상태(사용 가능, 예약됨, 정비 중)를 관리합니다.
 
-## Expanding the ESLint configuration
+### 3. 예약 시스템
+- **예약 신청:** 게스트는 원하는 카라반과 날짜를 선택하여 예약 신청을 할 수 있습니다.
+- **예약 승인/거절:** 호스트는 게스트의 예약 신청을 확인하고 승인 또는 거절할 수 있습니다.
+- **예약 날짜 관리:** 중복 예약을 방지하고 예약 가능한 날짜를 효율적으로 관리합니다.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 4. 리뷰 및 평가
+- **리뷰 작성:** 거래 완료 후 게스트와 호스트는 서로에 대한 리뷰와 평점(1-5점)을 작성할 수 있습니다.
+- **신뢰도 반영:** 작성된 리뷰와 평점은 사용자 신뢰도 시스템에 반영됩니다.
+
+## 기술 스택
+
+### Backend
+- **Node.js:** 서버 런타임 환경
+- **Express.js:** 웹 애플리케이션 프레임워크
+- **MongoDB:** NoSQL 데이터베이스
+- **Mongoose:** MongoDB ODM (Object Data Modeling)
+- **bcryptjs:** 비밀번호 해싱
+- **jsonwebtoken:** JWT 기반 인증
+- **cors:** Cross-Origin Resource Sharing 관리
+
+### Frontend
+- **React:** UI 라이브러리
+- **Vite:** 프론트엔드 빌드 툴
+- **React Router DOM:** 클라이언트 측 라우팅
+- **Axios:** HTTP 클라이언트
+
+## 프로젝트 실행 방법
+
+### 1. 백엔드 설정 및 실행
+```bash
+# server 디렉토리로 이동
+cd server
+
+# 의존성 설치
+npm install
+
+# 서버 실행
+npm start
+```
+(백엔드 서버는 기본적으로 `http://localhost:5000`에서 실행됩니다.)
+
+### 2. 프론트엔드 설정 및 실행
+```bash
+# 프로젝트 루트 디렉토리로 이동 (caravanapp)
+cd ..
+
+# 의존성 설치
+npm install
+
+# 프론트엔드 개발 서버 실행
+npm run dev
+```
+(프론트엔드 앱은 기본적으로 `http://localhost:5173`에서 실행됩니다.)
+
+---
+
+## 설계 원칙 (리팩터링 과정에서 적용)
+
+- **단일 책임 원칙 (SRP):** 각 클래스(Service, Repository, Validator)가 하나의 명확한 책임만 가지도록 설계되었습니다.
+- **개방/폐쇄 원칙 (OCP):** 기존 코드를 수정하지 않고 기능을 확장할 수 있도록 구조화되었습니다.
+- **의존성 역전 원칙 (DIP):** 의존성 주입(Dependency Injection) 컨테이너를 도입하여 고수준 모듈이 저수준 모듈에 직접 의존하지 않고 추상화에 의존하도록 했습니다.
+- **명확한 네이밍:** 변수명, 함수명, 상수명 등을 자기설명적으로 작성하여 코드의 가독성을 높였습니다.
+- **견고한 에러 처리:** 커스텀 예외 클래스를 정의하여 각 에러 상황에 맞는 명확한 메시지와 HTTP 상태 코드를 제공합니다. (현재 구현 중)
