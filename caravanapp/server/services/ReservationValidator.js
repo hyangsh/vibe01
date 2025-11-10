@@ -1,11 +1,11 @@
 const Caravan = require('../models/Caravan');
-const Reservation = require('../models/Reservation');
+const ReservationRepository = require('../repositories/ReservationRepository');
 
 class ReservationValidator {
   async validate(caravanId, startDate, endDate) {
     await this.validateCaravanExists(caravanId);
     this.validateDates(startDate, endDate);
-    await this.validateAvailability(caravanId, startDate, endDate);
+    this.validateAvailability(caravanId, startDate, endDate);
   }
 
   async validateCaravanExists(caravanId) {
@@ -21,13 +21,12 @@ class ReservationValidator {
     }
   }
 
-  async validateAvailability(caravanId, startDate, endDate) {
-    const existingReservation = await Reservation.findOne({
-      caravan: caravanId,
-      $or: [
-        { startDate: { $lt: endDate }, endDate: { $gt: startDate } },
-      ],
-    });
+  validateAvailability(caravanId, startDate, endDate) {
+    const existingReservation = ReservationRepository.findOverlap(
+      caravanId,
+      startDate,
+      endDate
+    );
 
     if (existingReservation) {
       throw new Error('Caravan is not available for the selected dates');

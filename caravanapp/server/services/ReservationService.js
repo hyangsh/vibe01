@@ -1,6 +1,7 @@
 const Reservation = require('../models/Reservation');
 const Caravan = require('../models/Caravan');
 const ReservationValidator = require('./ReservationValidator');
+const ReservationRepository = require('../repositories/ReservationRepository');
 
 class ReservationService {
   async createReservation(userId, reservationData) {
@@ -21,6 +22,7 @@ class ReservationService {
     });
 
     const reservation = await newReservation.save();
+    ReservationRepository.add(reservation); // Add to in-memory repository
     return reservation;
   }
 
