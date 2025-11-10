@@ -1,7 +1,10 @@
 const Caravan = require('../models/Caravan');
-const ReservationRepository = require('../repositories/ReservationRepository');
 
 class ReservationValidator {
+  constructor(reservationRepository) {
+    this.reservationRepository = reservationRepository;
+  }
+
   async validate(caravanId, startDate, endDate) {
     await this.validateCaravanExists(caravanId);
     this.validateDates(startDate, endDate);
@@ -22,7 +25,7 @@ class ReservationValidator {
   }
 
   validateAvailability(caravanId, startDate, endDate) {
-    const existingReservation = ReservationRepository.findOverlap(
+    const existingReservation = this.reservationRepository.findOverlap(
       caravanId,
       startDate,
       endDate
@@ -34,4 +37,4 @@ class ReservationValidator {
   }
 }
 
-module.exports = new ReservationValidator();
+module.exports = ReservationValidator;

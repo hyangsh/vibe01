@@ -53,4 +53,4 @@ class ReviewService {
   }
 }
 
-module.exports = new ReviewService();
+module.exports = ReviewService;

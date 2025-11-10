@@ -59,4 +59,4 @@ class CaravanService {
   }
 }
 
-module.exports = new CaravanService();
+module.exports = CaravanService;

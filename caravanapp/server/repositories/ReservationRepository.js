@@ -53,4 +53,4 @@ class ReservationRepository {
   }
 }
 
-module.exports = new ReservationRepository();
+module.exports = ReservationRepository;

@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const ReservationService = require('../services/ReservationService');
+const container = require('../core/bootstrap');
+const ReservationService = container.resolve('reservationService');
 
 // @route   POST api/reservations
 // @desc    Create a new reservation

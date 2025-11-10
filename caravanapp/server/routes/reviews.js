@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const ReviewService = require('../services/ReviewService');
+const container = require('../core/bootstrap');
+const ReviewService = container.resolve('reviewService');
 
 // @route   POST api/reviews
 // @desc    Create a new review

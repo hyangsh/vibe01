@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const UserService = require('../services/UserService');
+const container = require('../core/bootstrap');
+const UserService = container.resolve('userService');
 
 // @route   POST api/users/register
 // @desc    Register a new user

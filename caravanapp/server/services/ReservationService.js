@@ -1,13 +1,16 @@
 const Reservation = require('../models/Reservation');
 const Caravan = require('../models/Caravan');
-const ReservationValidator = require('./ReservationValidator');
-const ReservationRepository = require('../repositories/ReservationRepository');
 
 class ReservationService {
+  constructor(reservationValidator, reservationRepository) {
+    this.reservationValidator = reservationValidator;
+    this.reservationRepository = reservationRepository;
+  }
+
   async createReservation(userId, reservationData) {
     const { caravan, startDate, endDate } = reservationData;
 
-    await ReservationValidator.validate(caravan, startDate, endDate);
+    await this.reservationValidator.validate(caravan, startDate, endDate);
 
     const caravanToBook = await Caravan.findById(caravan);
 
@@ -22,7 +25,7 @@ class ReservationService {
     });
 
     const reservation = await newReservation.save();
-    ReservationRepository.add(reservation); // Add to in-memory repository
+    this.reservationRepository.add(reservation); // Add to in-memory repository
     return reservation;
   }
 
@@ -38,7 +41,7 @@ class ReservationService {
     const reservation = await Reservation.findById(reservationId)
       .populate('caravan')
       .populate('guest', ['name', 'email']);
-      
+
     if (!reservation) {
       throw new Error('Reservation not found');
     }
@@ -83,4 +86,4 @@ class ReservationService {
   }
 }
 
-module.exports = new ReservationService();
+module.exports = ReservationService;

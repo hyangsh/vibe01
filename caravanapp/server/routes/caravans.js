@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const CaravanService = require('../services/CaravanService');
+const container = require('../core/bootstrap');
+const CaravanService = container.resolve('caravanService');
 
 // @route   POST api/caravans
 // @desc    Create a new caravan
