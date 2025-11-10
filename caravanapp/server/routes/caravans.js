@@ -1,43 +1,29 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const Caravan = require('../models/Caravan');
-const User = require('../models/User');
+const CaravanService = require('../services/CaravanService');
 
 // @route   POST api/caravans
 // @desc    Create a new caravan
 // @access  Private (Host only)
 router.post('/', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
-    if (user.userType !== 'host') {
-      return res.status(401).json({ msg: 'User not authorized' });
-    }
-
-    const newCaravan = new Caravan({
-      ...req.body,
-      host: req.user.id,
-    });
-
-    const caravan = await newCaravan.save();
+    const caravan = await CaravanService.createCaravan(req.user.id, req.body);
     res.json(caravan);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(400).json({ msg: err.message });
   }
 });
-
 
 // @route   GET api/caravans
 // @desc    Get all caravans
 // @access  Public
 router.get('/', async (req, res) => {
   try {
-    const caravans = await Caravan.find();
+    const caravans = await CaravanService.getCaravans();
     res.json(caravans);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).json({ msg: err.message });
   }
 });
 
@@ -46,47 +32,26 @@ router.get('/', async (req, res) => {
 // @access  Public
 router.get('/:id', async (req, res) => {
   try {
-    const caravan = await Caravan.findById(req.params.id);
-    if (!caravan) {
-      return res.status(404).json({ msg: 'Caravan not found' });
-    }
+    const caravan = await CaravanService.getCaravanById(req.params.id);
     res.json(caravan);
   } catch (err) {
-    console.error(err.message);
-    if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'Caravan not found' });
-    }
-    res.status(500).send('Server Error');
+    res.status(404).json({ msg: err.message });
   }
 });
-
 
 // @route   PUT api/caravans/:id
 // @desc    Update a caravan
 // @access  Private (Host only)
 router.put('/:id', auth, async (req, res) => {
   try {
-    let caravan = await Caravan.findById(req.params.id);
-
-    if (!caravan) {
-      return res.status(404).json({ msg: 'Caravan not found' });
-    }
-
-    // Make sure user owns caravan
-    if (caravan.host.toString() !== req.user.id) {
-      return res.status(401).json({ msg: 'Not authorized' });
-    }
-
-    caravan = await Caravan.findByIdAndUpdate(
+    const caravan = await CaravanService.updateCaravan(
+      req.user.id,
       req.params.id,
-      { $set: req.body },
-      { new: true }
+      req.body
     );
-
     res.json(caravan);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(400).json({ msg: err.message });
   }
 });
 
@@ -95,23 +60,10 @@ router.put('/:id', auth, async (req, res) => {
 // @access  Private (Host only)
 router.delete('/:id', auth, async (req, res) => {
   try {
-    let caravan = await Caravan.findById(req.params.id);
-
-    if (!caravan) {
-      return res.status(404).json({ msg: 'Caravan not found' });
-    }
-
-    // Make sure user owns caravan
-    if (caravan.host.toString() !== req.user.id) {
-      return res.status(401).json({ msg: 'Not authorized' });
-    }
-
-    await Caravan.findByIdAndRemove(req.params.id);
-
-    res.json({ msg: 'Caravan removed' });
+    const result = await CaravanService.deleteCaravan(req.user.id, req.params.id);
+    res.json(result);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(400).json({ msg: err.message });
   }
 });
 

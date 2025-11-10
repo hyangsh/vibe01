@@ -1,113 +1,40 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const UserService = require('../services/UserService');
 
 // @route   POST api/users/register
 // @desc    Register a new user
 // @access  Public
 router.post('/register', async (req, res) => {
-  const { name, email, password, userType } = req.body;
-
   try {
-    let user = await User.findOne({ email });
-
-    if (user) {
-      return res.status(400).json({ msg: 'User already exists' });
-    }
-
-    user = new User({
-      name,
-      email,
-      password,
-      userType,
-    });
-
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
-
-    await user.save();
-
-    const payload = {
-      user: {
-        id: user.id,
-      },
-    };
-
-    jwt.sign(
-      payload,
-      'jwtSecret', // You should use a config variable for the secret
-      { expiresIn: 360000 },
-      (err, token) => {
-        if (err) throw err;
-        res.json({ token });
-      }
-    );
+    const result = await UserService.register(req.body);
+    res.json(result);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(400).json({ msg: err.message });
   }
 });
-
 
 // @route   POST api/users/login
 // @desc    Authenticate user & get token
 // @access  Public
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
   try {
-    let user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(400).json({ msg: 'Invalid credentials' });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-      return res.status(400).json({ msg: 'Invalid credentials' });
-    }
-
-    const payload = {
-      user: {
-        id: user.id,
-      },
-    };
-
-    jwt.sign(
-      payload,
-      'jwtSecret', // You should use a config variable for the secret
-      { expiresIn: 360000 },
-      (err, token) => {
-        if (err) throw err;
-        res.json({ token });
-      }
-    );
+    const result = await UserService.login(req.body);
+    res.json(result);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(400).json({ msg: err.message });
   }
 });
-
 
 // @route   GET api/users/:id
 // @desc    Get user by ID
 // @access  Public
 router.get('/:id', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select('-password');
-    if (!user) {
-      return res.status(404).json({ msg: 'User not found' });
-    }
+    const user = await UserService.getUserById(req.params.id);
     res.json(user);
   } catch (err) {
-    console.error(err.message);
-    if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'User not found' });
-    }
-    res.status(500).send('Server Error');
+    res.status(404).json({ msg: err.message });
   }
 });
 
