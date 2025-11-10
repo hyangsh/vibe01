@@ -7,6 +7,9 @@ import Register from './components/Register';
 import CaravanList from './components/CaravanList';
 import CaravanDetails from './components/CaravanDetails';
 import CaravanForm from './components/CaravanForm';
+import Reservations from './components/Reservations';
+import HostDashboard from './components/HostDashboard';
+import Profile from './components/Profile';
 import './App.css';
 
 function App() {
@@ -21,6 +24,9 @@ function App() {
           <Route path="/caravans" element={<CaravanList />} />
           <Route path="/caravans/:id" element={<CaravanDetails />} />
           <Route path="/create-caravan" element={<CaravanForm />} />
+          <Route path="/reservations" element={<Reservations />} />
+          <Route path="/host-dashboard" element={<HostDashboard />} />
+          <Route path="/users/:id" element={<Profile />} />
         </Routes>
       </main>
     </Router>
