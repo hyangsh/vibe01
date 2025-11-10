@@ -1,14 +1,14 @@
 const Reservation = require('../models/Reservation');
 const Caravan = require('../models/Caravan');
+const ReservationValidator = require('./ReservationValidator');
 
 class ReservationService {
   async createReservation(userId, reservationData) {
     const { caravan, startDate, endDate } = reservationData;
 
+    await ReservationValidator.validate(caravan, startDate, endDate);
+
     const caravanToBook = await Caravan.findById(caravan);
-    if (!caravanToBook) {
-      throw new Error('Caravan not found');
-    }
 
     const newReservation = new Reservation({
       guest: userId,
