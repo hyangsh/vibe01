@@ -55,5 +55,24 @@ SOLID 설계 원칙을 적용하여 코드의 유지보수성, 확장성, 테스
 - **상수화:** JWT 시크릿 키, 유효기간, 각종 매직 넘버들을 의미를 알 수 있는 상수로 추출하여 코드의 가독성과 유지보수성을 높였습니다.
 - **로직 캡슐화:** 가격 계산 로직을 `_calculateTotalPrice`와 같은 헬퍼 메서드로 분리하여 핵심 로직을 더 간결하고 명확하게 만들었습니다.
 
-### 5. 에러 처리와 예외 관리 (진행 중)
-- **커스텀 예외 클래스 정의:** 견고한 에러 처리 전략을 위해 `AppError`를 비롯한 커스텀 예외 클래스들을 `core/errors` 디렉터리에 정의했습니다. 
+### 5. 에러 처리와 예외 관리
+- **커스텀 예외 클래스 정의:** 견고한 에러 처리 전략을 위해 `AppError`를 비롯한 커스텀 예외 클래스들을 `core/errors` 디렉터리에 정의했습니다.
+- **예외 적용:** 서비스 계층 전반에 걸쳐 `NotFoundError`, `AuthorizationError` 등의 커스텀 예외를 적용하여 상황에 맞는 명확한 에러를 반환하도록 개선했습니다.
+
+### 6. 디자인 패턴 적용
+- **리포지토리 패턴:**
+    - `repositories` 디렉터리에 `ReservationRepository.js` 및 `CaravanRepository.js`를 생성하여 데이터 접근 로직을 추상화했습니다.
+    - `ReservationService`가 직접 Mongoose 모델을 호출하는 대신 이들 리포지토리를 사용하도록 업데이트했습니다.
+- **팩토리 패턴:**
+    - `services` 디렉터리에 `ReservationFactory.js`를 생성하여 `Reservation` 객체 생성 로직을 캡슐화했습니다.
+    - `ReservationService`가 새로운 예약을 생성할 때 이 팩토리를 사용하도록 변경했습니다.
+- **전략 패턴:**
+    - `services/discount` 디렉터리에 `DiscountStrategy.js` (기본 클래스), `NoDiscount.js`, `SeasonalDiscount.js` (구체적인 전략)를 생성했습니다.
+    - `ReservationService`가 예약 총액을 계산할 때 할인 전략을 적용하도록 통합했습니다.
+- **옵저버 패턴:**
+    - `services/notification` 디렉터리에 `ReservationNotifier.js` (주체) 및 `EmailNotifier.js` (옵저버)를 생성했습니다.
+    - `ReservationService`에서 새로운 예약이 생성될 때 등록된 옵저버들에게 알림을 보내도록 통합했습니다.
+
+### 7. 테스트 코드 리팩터링
+- **테스트 격리:** `ReservationService.test.js` 파일을 업데이트하여 리포지토리, 팩토리 등 새로운 의존성을 모의(Mock) 처리함으로써 서비스 로직을 독립적으로 테스트하도록 개선했습니다.
+- **테스트 정확성 확보:** `UserService.test.js`의 실패하던 테스트를 수정하여 모든 테스트가 통과하는 것을 확인했습니다.
