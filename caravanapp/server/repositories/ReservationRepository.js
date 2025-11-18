@@ -1,55 +1,35 @@
 const Reservation = require('../models/Reservation');
 
 class ReservationRepository {
-  constructor() {
-    this.reservationsByCaravan = new Map();
+  async create(reservationData) {
+    const reservation = new Reservation(reservationData);
+    return await reservation.save();
   }
 
-  async loadAll() {
-    const allReservations = await Reservation.find({}).sort('startDate');
-    for (const reservation of allReservations) {
-      this.add(reservation);
-    }
-    console.log('Reservation repository loaded.');
+  async findById(id) {
+    return await Reservation.findById(id);
   }
 
-  add(reservation) {
-    const caravanId = reservation.caravan.toString();
-    if (!this.reservationsByCaravan.has(caravanId)) {
-      this.reservationsByCaravan.set(caravanId, []);
-    }
-    const caravanReservations = this.reservationsByCaravan.get(caravanId);
-    
-    // Keep the array sorted by startDate
-    const index = caravanReservations.findIndex(
-      (r) => new Date(r.startDate) > new Date(reservation.startDate)
-    );
-    if (index === -1) {
-      caravanReservations.push(reservation);
-    } else {
-      caravanReservations.splice(index, 0, reservation);
-    }
+  async findByCaravanId(caravanId) {
+    return await Reservation.find({ caravan: caravanId });
   }
 
-  findOverlappingReservation(caravanId, startDate, endDate) {
-    const caravanReservations = this.reservationsByCaravan.get(caravanId.toString());
-    if (!caravanReservations) {
-      return null; // No reservations for this caravan
-    }
+  async findByCaravanIds(caravanIds) {
+    return await Reservation.find({ caravan: { $in: caravanIds } });
+  }
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+  async findByUserId(userId) {
+    return await Reservation.find({ user: userId });
+  }
 
-    // Simple linear scan for overlap
-    for (const reservation of caravanReservations) {
-      const resStart = new Date(reservation.startDate);
-      const resEnd = new Date(reservation.endDate);
-      if (start < resEnd && end > resStart) {
-        return reservation; // Found an overlap
-      }
-    }
+  async update(id, reservationData) {
+    return await Reservation.findByIdAndUpdate(id, reservationData, {
+      new: true,
+    });
+  }
 
-    return null; // No overlap found
+  async delete(id) {
+    return await Reservation.findByIdAndDelete(id);
   }
 }
 

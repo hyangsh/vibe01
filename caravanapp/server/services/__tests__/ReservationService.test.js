@@ -1,28 +1,33 @@
 const ReservationService = require('../ReservationService');
-const Reservation = require('../../models/Reservation');
-const Caravan = require('../../models/Caravan');
 const NotFoundError = require('../../core/errors/NotFoundError');
 const AuthorizationError = require('../../core/errors/AuthorizationError');
 
-jest.mock('../../models/Reservation');
-jest.mock('../../models/Caravan');
+jest.mock('../../repositories/ReservationRepository');
+jest.mock('../../repositories/CaravanRepository');
+jest.mock('../ReservationFactory');
+jest.mock('../discount/NoDiscount');
+jest.mock('../notification/ReservationNotifier');
 
 describe('ReservationService', () => {
   let reservationService;
   let reservationValidator;
-  let reservationRepository;
 
   beforeEach(() => {
     reservationValidator = {
       validate: jest.fn(),
     };
-    reservationRepository = {
-      add: jest.fn(),
-    };
     reservationService = new ReservationService(
       reservationValidator,
-      reservationRepository
     );
+    reservationService.reservationRepository.create = jest.fn();
+    reservationService.reservationRepository.findById = jest.fn();
+    reservationService.reservationRepository.findByUserId = jest.fn();
+    reservationService.reservationRepository.findByCaravanIds = jest.fn();
+    reservationService.reservationRepository.update = jest.fn();
+    reservationService.caravanRepository.findById = jest.fn();
+    reservationService.caravanRepository.findByHostId = jest.fn();
+    reservationService.reservationFactory.create = jest.fn();
+    reservationService.reservationNotifier.notify = jest.fn();
   });
 
   describe('createReservation', () => {
@@ -36,8 +41,9 @@ describe('ReservationService', () => {
       const caravan = { _id: 'caravan-id', dailyRate: 100 };
       const reservation = { _id: 'reservation-id', ...reservationData };
 
-      Caravan.findById.mockResolvedValue(caravan);
-      Reservation.prototype.save = jest.fn().mockResolvedValue(reservation);
+      reservationService.caravanRepository.findById.mockResolvedValue(caravan);
+      reservationService.reservationFactory.create.mockReturnValue(reservation);
+      reservationService.reservationRepository.create.mockResolvedValue(reservation);
 
       const result = await reservationService.createReservation(
         userId,
@@ -49,8 +55,10 @@ describe('ReservationService', () => {
         '2023-01-01',
         '2023-01-10'
       );
-      expect(Caravan.findById).toHaveBeenCalledWith('caravan-id');
-      expect(reservationRepository.add).toHaveBeenCalledWith(reservation);
+      expect(reservationService.caravanRepository.findById).toHaveBeenCalledWith('caravan-id');
+      expect(reservationService.reservationFactory.create).toHaveBeenCalled();
+      expect(reservationService.reservationRepository.create).toHaveBeenCalledWith(reservation);
+      expect(reservationService.reservationNotifier.notify).toHaveBeenCalledWith(reservation);
       expect(result).toEqual(reservation);
     });
   });
@@ -59,13 +67,11 @@ describe('ReservationService', () => {
     it('should get reservations for a user', async () => {
       const userId = 'user-id';
       const reservations = [{ _id: 'reservation-id' }];
-      Reservation.find.mockReturnValue({
-        populate: jest.fn().mockResolvedValue(reservations),
-      });
+      reservationService.reservationRepository.findByUserId.mockResolvedValue(reservations);
 
       const result = await reservationService.getReservationsForUser(userId);
 
-      expect(Reservation.find).toHaveBeenCalledWith({ guest: userId });
+      expect(reservationService.reservationRepository.findByUserId).toHaveBeenCalledWith(userId);
       expect(result).toEqual(reservations);
     });
   });
@@ -80,22 +86,22 @@ describe('ReservationService', () => {
         caravan: 'caravan-id',
         guest: 'user-id',
       };
-      Reservation.findById.mockResolvedValue(reservation);
-      Caravan.findById.mockResolvedValue(caravan);
+      reservationService.reservationRepository.findById.mockResolvedValue(reservation);
+      reservationService.caravanRepository.findById.mockResolvedValue(caravan);
 
       const result = await reservationService.getReservationById(
         userId,
         reservationId
       );
 
-      expect(Reservation.findById).toHaveBeenCalledWith(reservationId);
+      expect(reservationService.reservationRepository.findById).toHaveBeenCalledWith(reservationId);
       expect(result).toEqual(reservation);
     });
 
     it('should throw an error if reservation not found', async () => {
       const userId = 'user-id';
       const reservationId = 'reservation-id';
-      Reservation.findById.mockResolvedValue(null);
+      reservationService.reservationRepository.findById.mockResolvedValue(null);
 
       await expect(
         reservationService.getReservationById(userId, reservationId)
@@ -111,8 +117,8 @@ describe('ReservationService', () => {
         caravan: 'caravan-id',
         guest: 'other-user-id',
       };
-      Reservation.findById.mockResolvedValue(reservation);
-      Caravan.findById.mockResolvedValue(caravan);
+      reservationService.reservationRepository.findById.mockResolvedValue(reservation);
+      reservationService.caravanRepository.findById.mockResolvedValue(caravan);
 
       await expect(
         reservationService.getReservationById(userId, reservationId)
@@ -128,9 +134,9 @@ describe('ReservationService', () => {
       const caravan = { _id: 'caravan-id', host: 'user-id' };
       const reservation = { _id: reservationId, caravan: 'caravan-id' };
       const updatedReservation = { ...reservation, status };
-      Reservation.findById.mockResolvedValue(reservation);
-      Caravan.findById.mockResolvedValue(caravan);
-      Reservation.findByIdAndUpdate.mockResolvedValue(updatedReservation);
+      reservationService.reservationRepository.findById.mockResolvedValue(reservation);
+      reservationService.caravanRepository.findById.mockResolvedValue(caravan);
+      reservationService.reservationRepository.update.mockResolvedValue(updatedReservation);
 
       const result = await reservationService.updateReservationStatus(
         userId,
@@ -138,11 +144,10 @@ describe('ReservationService', () => {
         status
       );
 
-      expect(Reservation.findById).toHaveBeenCalledWith(reservationId);
-      expect(Reservation.findByIdAndUpdate).toHaveBeenCalledWith(
+      expect(reservationService.reservationRepository.findById).toHaveBeenCalledWith(reservationId);
+      expect(reservationService.reservationRepository.update).toHaveBeenCalledWith(
         reservationId,
         { $set: { status } },
-        { new: true }
       );
       expect(result).toEqual(updatedReservation);
     });
@@ -151,7 +156,7 @@ describe('ReservationService', () => {
       const userId = 'user-id';
       const reservationId = 'reservation-id';
       const status = 'approved';
-      Reservation.findById.mockResolvedValue(null);
+      reservationService.reservationRepository.findById.mockResolvedValue(null);
 
       await expect(
         reservationService.updateReservationStatus(userId, reservationId, status)
@@ -164,8 +169,8 @@ describe('ReservationService', () => {
       const status = 'approved';
       const caravan = { _id: 'caravan-id', host: 'other-user-id' };
       const reservation = { _id: reservationId, caravan: 'caravan-id' };
-      Reservation.findById.mockResolvedValue(reservation);
-      Caravan.findById.mockResolvedValue(caravan);
+      reservationService.reservationRepository.findById.mockResolvedValue(reservation);
+      reservationService.caravanRepository.findById.mockResolvedValue(caravan);
 
       await expect(
         reservationService.updateReservationStatus(userId, reservationId, status)
@@ -181,15 +186,16 @@ describe('ReservationService', () => {
         { _id: 'reservation-id-1' },
         { _id: 'reservation-id-2' },
       ];
-      Caravan.find.mockResolvedValue(caravans);
-      Reservation.find.mockResolvedValue(reservations);
+      reservationService.caravanRepository.findByHostId.mockResolvedValue(caravans);
+      reservationService.reservationRepository.findByCaravanIds.mockResolvedValue(reservations);
 
       const result = await reservationService.getReservationsForHost(userId);
 
-      expect(Caravan.find).toHaveBeenCalledWith({ host: userId });
-      expect(Reservation.find).toHaveBeenCalledWith({
-        caravan: { $in: ['caravan-id-1', 'caravan-id-2'] },
-      });
+      expect(reservationService.caravanRepository.findByHostId).toHaveBeenCalledWith(userId);
+      expect(reservationService.reservationRepository.findByCaravanIds).toHaveBeenCalledWith([
+        'caravan-id-1',
+        'caravan-id-2',
+      ]);
       expect(result).toEqual(reservations);
     });
   });
