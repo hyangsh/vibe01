@@ -1,17 +1,22 @@
 const Review = require('../models/Review');
 const Reservation = require('../models/Reservation');
+const NotFoundError = require('../core/errors/NotFoundError');
+const ValidationError = require('../core/errors/ValidationError');
+const AuthorizationError = require('../core/errors/AuthorizationError');
 
 class ReviewService {
   async createReview(userId, reviewData) {
     const { reservationId, rating, comment } = reviewData;
 
-    const reservation = await Reservation.findById(reservationId).populate('caravan');
+    const reservation = await Reservation.findById(reservationId).populate(
+      'caravan'
+    );
     if (!reservation) {
-      throw new Error('Reservation not found');
+      throw new NotFoundError('Reservation not found');
     }
 
     if (reservation.status !== 'completed') {
-      throw new Error('Reservation not completed yet');
+      throw new ValidationError('Reservation not completed yet');
     }
 
     const guest = reservation.guest.toString();
@@ -23,7 +28,7 @@ class ReviewService {
     } else if (userId === host) {
       reviewee = guest;
     } else {
-      throw new Error('User not authorized');
+      throw new AuthorizationError('User not authorized');
     }
 
     const newReview = new Review({
@@ -39,7 +44,10 @@ class ReviewService {
   }
 
   async getReviewsForUser(userId) {
-    const reviews = await Review.find({ reviewee: userId }).populate('reviewer', ['name']);
+    const reviews = await Review.find({ reviewee: userId }).populate(
+      'reviewer',
+      ['name']
+    );
     return reviews;
   }
 

@@ -1,11 +1,13 @@
 const Caravan = require('../models/Caravan');
 const User = require('../models/User');
+const AuthorizationError = require('../core/errors/AuthorizationError');
+const NotFoundError = require('../core/errors/NotFoundError');
 
 class CaravanService {
   async createCaravan(userId, caravanData) {
     const user = await User.findById(userId);
     if (user.userType !== 'host') {
-      throw new Error('User not authorized');
+      throw new AuthorizationError('User not authorized');
     }
 
     const newCaravan = new Caravan({
@@ -25,7 +27,7 @@ class CaravanService {
   async getCaravanById(caravanId) {
     const caravan = await Caravan.findById(caravanId);
     if (!caravan) {
-      throw new Error('Caravan not found');
+      throw new NotFoundError('Caravan not found');
     }
     return caravan;
   }
@@ -34,7 +36,7 @@ class CaravanService {
     let caravan = await this.getCaravanById(caravanId);
 
     if (caravan.host.toString() !== userId) {
-      throw new Error('Not authorized');
+      throw new AuthorizationError('Not authorized');
     }
 
     caravan = await Caravan.findByIdAndUpdate(
@@ -50,7 +52,7 @@ class CaravanService {
     let caravan = await this.getCaravanById(caravanId);
 
     if (caravan.host.toString() !== userId) {
-      throw new Error('Not authorized');
+      throw new AuthorizationError('Not authorized');
     }
 
     await Caravan.findByIdAndRemove(caravanId);

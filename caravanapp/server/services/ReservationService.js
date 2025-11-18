@@ -1,5 +1,7 @@
 const Reservation = require('../models/Reservation');
 const Caravan = require('../models/Caravan');
+const NotFoundError = require('../core/errors/NotFoundError');
+const AuthorizationError = require('../core/errors/AuthorizationError');
 
 const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 
@@ -54,7 +56,7 @@ class ReservationService {
       .populate('guest', ['name', 'email']);
 
     if (!reservation) {
-      throw new Error('Reservation not found');
+      throw new NotFoundError('Reservation not found');
     }
 
     const caravan = await Caravan.findById(reservation.caravan._id);
@@ -62,20 +64,22 @@ class ReservationService {
       reservation.guest._id.toString() !== userId &&
       caravan.host.toString() !== userId
     ) {
-      throw new Error('User not authorized');
+      throw new AuthorizationError('User not authorized');
     }
     return reservation;
   }
 
   async updateReservationStatus(userId, reservationId, status) {
-    let reservation = await Reservation.findById(reservationId).populate('caravan');
+    let reservation = await Reservation.findById(reservationId).populate(
+      'caravan'
+    );
 
     if (!reservation) {
-      throw new Error('Reservation not found');
+      throw new NotFoundError('Reservation not found');
     }
 
     if (reservation.caravan.host.toString() !== userId) {
-      throw new Error('User not authorized');
+      throw new AuthorizationError('User not authorized');
     }
 
     reservation = await Reservation.findByIdAndUpdate(
@@ -90,7 +94,9 @@ class ReservationService {
   async getReservationsForHost(userId) {
     const caravans = await Caravan.find({ host: userId });
     const caravanIds = caravans.map((caravan) => caravan._id);
-    const reservations = await Reservation.find({ caravan: { $in: caravanIds } })
+    const reservations = await Reservation.find({
+      caravan: { $in: caravanIds },
+    })
       .populate('caravan', ['name'])
       .populate('guest', ['name', 'email']);
     return reservations;
