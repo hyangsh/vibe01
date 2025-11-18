@@ -27,7 +27,7 @@ class UserService {
     const salt = await bcrypt.genSalt(BCRYPT_SALT_ROUNDS);
     user.password = await bcrypt.hash(password, salt);
 
-    await user.save();
+    user = await user.save();
 
     const payload = {
       user: {

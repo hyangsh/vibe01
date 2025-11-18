@@ -51,17 +51,15 @@ class ReservationService {
   }
 
   async getReservationById(userId, reservationId) {
-    const reservation = await Reservation.findById(reservationId)
-      .populate('caravan')
-      .populate('guest', ['name', 'email']);
+    const reservation = await Reservation.findById(reservationId);
 
     if (!reservation) {
       throw new NotFoundError('Reservation not found');
     }
 
-    const caravan = await Caravan.findById(reservation.caravan._id);
+    const caravan = await Caravan.findById(reservation.caravan);
     if (
-      reservation.guest._id.toString() !== userId &&
+      reservation.guest.toString() !== userId &&
       caravan.host.toString() !== userId
     ) {
       throw new AuthorizationError('User not authorized');
@@ -70,15 +68,14 @@ class ReservationService {
   }
 
   async updateReservationStatus(userId, reservationId, status) {
-    let reservation = await Reservation.findById(reservationId).populate(
-      'caravan'
-    );
+    let reservation = await Reservation.findById(reservationId);
 
     if (!reservation) {
       throw new NotFoundError('Reservation not found');
     }
 
-    if (reservation.caravan.host.toString() !== userId) {
+    const caravan = await Caravan.findById(reservation.caravan);
+    if (caravan.host.toString() !== userId) {
       throw new AuthorizationError('User not authorized');
     }
 
@@ -96,9 +93,7 @@ class ReservationService {
     const caravanIds = caravans.map((caravan) => caravan._id);
     const reservations = await Reservation.find({
       caravan: { $in: caravanIds },
-    })
-      .populate('caravan', ['name'])
-      .populate('guest', ['name', 'email']);
+    });
     return reservations;
   }
 }
