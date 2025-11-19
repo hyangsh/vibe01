@@ -6,7 +6,6 @@ const ReservationRepository = require('./repositories/ReservationRepository');
 // Connect Database
 const startServer = async () => {
   await connectDB();
-  await ReservationRepository.loadAll();
 
   const app = express();
 

@@ -28,6 +28,18 @@ router.get('/', async (req, res) => {
   }
 });
 
+// @route   GET api/caravans/my-caravans
+// @desc    Get all caravans for the logged-in host
+// @access  Private
+router.get('/my-caravans', auth, async (req, res) => {
+  try {
+    const caravans = await CaravanService.getCaravansByHost(req.user.id);
+    res.json(caravans);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+});
+
 // @route   GET api/caravans/:id
 // @desc    Get a single caravan by ID
 // @access  Public

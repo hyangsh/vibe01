@@ -33,6 +33,6 @@ const CaravanList = () => {
       </div>
     </div>
   );
-};
+  };
 
 export default CaravanList;

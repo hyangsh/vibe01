@@ -32,6 +32,11 @@ class CaravanService {
     return caravan;
   }
 
+  async getCaravansByHost(userId) {
+    const caravans = await Caravan.find({ host: userId });
+    return caravans;
+  }
+
   async updateCaravan(userId, caravanId, caravanData) {
     let caravan = await this.getCaravanById(caravanId);
 
