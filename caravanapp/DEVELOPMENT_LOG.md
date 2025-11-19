@@ -76,3 +76,44 @@ SOLID 설계 원칙을 적용하여 코드의 유지보수성, 확장성, 테스
 ### 7. 테스트 코드 리팩터링
 - **테스트 격리:** `ReservationService.test.js` 파일을 업데이트하여 리포지토리, 팩토리 등 새로운 의존성을 모의(Mock) 처리함으로써 서비스 로직을 독립적으로 테스트하도록 개선했습니다.
 - **테스트 정확성 확보:** `UserService.test.js`의 실패하던 테스트를 수정하여 모든 테스트가 통과하는 것을 확인했습니다.
+
+---
+
+## Phase 3: 프론트엔드 UI/UX 및 기능 개선
+
+### 1. Tailwind CSS v4 설정 문제 해결
+- **초기 문제 진단:** `postcss`가 `@tailwind.config.js base;`를 인식하지 못하고 `px-6`와 같은 유틸리티 클래스를 찾을 수 없다는 오류 발생.
+- **`postcss.config.js` 수정:** `@tailwindcss/postcss`를 `tailwindcss`로 변경 시도 (이후 기존으로 롤백).
+- **`@tailwind` 지시문 변경:** Tailwind CSS v4에서 `@tailwind base;`, `@tailwind components;`, `@tailwind utilities;` 지시문이 제거되었음을 확인하고 `src/index.css` 파일을 `@import "tailwindcss";`로 수정.
+- **`@apply` 문제 해결:** `btn`과 같은 커스텀 클래스에 `@apply`를 사용할 때 발생하는 오류(`Cannot apply unknown utility class 'btn'`)를 해결하기 위해, 기본 `.btn` 클래스의 유틸리티들을 각 버튼 변형(`.btn-cta-black`, `.btn-cta-orange`, `.btn-ghost` 등)에 직접 인라인하고 `.btn` 기본 클래스 정의를 제거하여 해결.
+
+### 2. 네비게이션 UI/UX 리팩토링 (우측 슬라이드 사이드바)
+- `src/components/Navbar.jsx` 컴포넌트를 정적 네비게이션 바에서 우측 슬라이드 드로어(사이드바) 형태로 전면 리팩토링.
+- **구현 기능:** 화면 우측 상단 고정 햄버거 아이콘(트리거), 부드러운 슬라이딩 애니메이션, 모바일(100%)/데스크톱(300px-400px) 반응형 너비, 사이드바 상단 닫기(X) 버튼, 배경 딤(Dimmed Overlay) 처리 및 오버레이 클릭 시 닫기 기능.
+- 기존 네비게이션 링크들을 사이드바 내부로 이동시키고 세로 정렬 및 hover 효과 적용.
+
+### 3. 핵심 기능 폼(Register, Login, Create Caravan) 개선
+- **`Register.jsx`:**
+    - 로딩 및 에러 상태 관리(`useState`) 추가, 사용자 피드백(에러 메시지), 성공 시 `/login`으로 리디렉션(`useNavigate`) 기능 구현.
+    - Tailwind CSS를 활용하여 폼, 입력 필드, 제출 버튼의 스타일을 현대적으로 개선.
+- **`Login.jsx`:**
+    - 로딩 및 에러 상태 관리(`useState`) 추가, 사용자 피드백(에러 메시지) 구현.
+    - 로그인 성공 시 JWT 토큰을 `localStorage`에 저장하고, `axios.defaults.headers.common['x-auth-token']`에 설정하여 전역 인증 처리.
+    - 로그인 성공 시 `/` (홈페이지)로 리디렉션(`useNavigate`) 기능 구현.
+    - `Login` 폼이 `Register` 폼 로직을 실행하는 오류를 진단하고, `Login.jsx` 코드를 재작성하여 문제 해결.
+    - Tailwind CSS를 활용하여 폼 스타일 개선.
+- **`CaravanForm.jsx` (캐러밴 생성):**
+    - 로딩 및 에러 상태 관리(`useState`) 추가, 사용자 피드백(에러 메시지) 구현.
+    - `capacity` 및 `dailyRate` 필드가 백엔드에 숫자로 전송되지 않아 발생하던 `400 Bad Request` 오류를 해결하기 위해, `onSubmit` 핸들러에서 해당 필드들을 숫자로 명시적 파싱하여 전송하도록 수정.
+    - 캐러밴 생성 성공 시 `/` (홈페이지)로 리디렉션(`useNavigate`) 기능 구현.
+    - Tailwind CSS를 활용하여 폼 스타일 개선.
+
+### 4. 홈 화면 캐러밴 목록 표시
+- **백엔드 변경:** 특정 호스트(로그인 사용자)의 캐러밴 목록을 가져오기 위한 새 백엔드 라우트 `GET /api/caravans/my-caravans`를 `server/routes/caravans.js`에 추가하고, `server/services/CaravanService.js`에 `getCaravansByHost` 메서드 구현.
+- **프론트엔드 변경:** `src/components/Home.jsx`를 수정하여 로그인한 사용자가 등록한 캐러밴 목록을 가져와 카드 레이아웃으로 표시.
+- (임시) `CaravanList.jsx`에 샘플 캐러밴 데이터 추가/삭제 기능 구현 후 롤백.
+
+### 5. 백엔드 서버 및 데이터베이스 문제 해결
+- **`net::ERR_CONNECTION_REFUSED` / `ECONNREFUSED` 오류 진단:** 프론트엔드 및 백엔드에서 발생하는 연결 거부 오류의 원인이 백엔드 서버 또는 MongoDB 데이터베이스 미실행임을 진단.
+- **MongoDB 설치 안내:** Ubuntu 24.04에 MongoDB Community Edition 8.0을 설치하기 위한 상세한 단계별 지침 제공. GPG 키 누락 및 저장소 파일 생성 오류 등 다양한 설치 문제 해결 지원.
+- **백엔드 충돌 (`TypeError`) 해결:** `server/server.js` 파일에서 `TypeError: ReservationRepository.loadAll is not a function` 오류를 유발하던 미구현 코드 라인을 제거하여 서버가 정상적으로 시작되도록 수정.
