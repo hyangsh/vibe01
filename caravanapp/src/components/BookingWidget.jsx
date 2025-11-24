@@ -97,6 +97,7 @@ const BookingWidget = ({ caravan }) => {
         caravan: caravan._id,
         startDate: date[0].toISOString(),
         endDate: date[1].toISOString(),
+        transactionId: transaction.transactionId, // Add transactionId
       };
 
       const token = localStorage.getItem("token");

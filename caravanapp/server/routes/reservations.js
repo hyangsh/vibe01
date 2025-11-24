@@ -9,12 +9,20 @@ const ReservationService = container.resolve("reservationService");
 // @access  Private
 router.post("/", auth, async (req, res) => {
   try {
+    // Assuming paymentData (like transactionId) is sent in the body
+    const { caravan, startDate, endDate, ...paymentData } = req.body;
+    const reservationData = { caravan, startDate, endDate };
+
     const reservation = await ReservationService.createReservation(
       req.user.id,
-      req.body,
+      reservationData,
+      paymentData,
     );
-    res.json(reservation);
+    res.status(201).json(reservation);
   } catch (err) {
+    if (err.name === "ConflictError") {
+      return res.status(409).json({ msg: err.message });
+    }
     res.status(400).json({ msg: err.message });
   }
 });

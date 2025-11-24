@@ -1,9 +1,9 @@
 const Reservation = require("../models/Reservation");
 
 class ReservationRepository {
-  async create(reservationData) {
+  async create(reservationData, session) {
     const reservation = new Reservation(reservationData);
-    return await reservation.save();
+    return await reservation.save({ session });
   }
 
   async findById(id) {
@@ -30,6 +30,29 @@ class ReservationRepository {
 
   async delete(id) {
     return await Reservation.findByIdAndDelete(id);
+  }
+
+  async findOverlapping(caravanId, startDate, endDate) {
+    const query = {
+      caravan: caravanId,
+      status: "confirmed", // Only check against confirmed bookings
+      $or: [
+        {
+          // Case 1: Existing booking starts during the new booking
+          startDate: { $lt: endDate, $gte: startDate },
+        },
+        {
+          // Case 2: Existing booking ends during the new booking
+          endDate: { $lte: endDate, $gt: startDate },
+        },
+        {
+          // Case 3: Existing booking envelops the new booking
+          startDate: { $lte: startDate },
+          endDate: { $gte: endDate },
+        },
+      ],
+    };
+    return await Reservation.find(query);
   }
 }
 

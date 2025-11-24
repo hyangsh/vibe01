@@ -1,5 +1,13 @@
+const PaymentHistoryRepository = require("../repositories/PaymentHistoryRepository");
+
 class PaymentService {
-  // Payment logic will be implemented here in the future.
+  constructor() {
+    this.paymentHistoryRepository = new PaymentHistoryRepository();
+  }
+
+  async getPaymentHistoryForUser(userId) {
+    return await this.paymentHistoryRepository.findByUserId(userId);
+  }
 }
 
 module.exports = PaymentService;
