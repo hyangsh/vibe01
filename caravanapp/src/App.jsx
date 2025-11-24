@@ -10,6 +10,7 @@ import CaravanForm from "./components/CaravanForm";
 import Reservations from "./components/Reservations";
 import HostDashboard from "./components/HostDashboard";
 import Profile from "./components/Profile";
+import BookingConfirmation from "./components/BookingConfirmation";
 import "./App.css";
 
 function App() {
@@ -28,6 +29,10 @@ function App() {
           <Route path="/host-dashboard" element={<HostDashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:id" element={<Profile />} />
+          <Route
+            path="/booking-confirmation"
+            element={<BookingConfirmation />}
+          />
         </Routes>
       </main>
     </Router>
