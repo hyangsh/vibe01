@@ -47,6 +47,20 @@ router.get("/host", auth, async (req, res) => {
   }
 });
 
+// @route   GET api/reservations/caravan/:caravanId
+// @desc    Get all reservations for a specific caravan
+// @access  Public
+router.get("/caravan/:caravanId", async (req, res) => {
+  try {
+    const reservations = await ReservationService.getReservationsForCaravan(
+      req.params.caravanId,
+    );
+    res.json(reservations);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+});
+
 // @route   GET api/reservations/:id
 // @desc    Get a single reservation by ID
 // @access  Private

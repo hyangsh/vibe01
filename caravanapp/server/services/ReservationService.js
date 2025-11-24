@@ -105,6 +105,12 @@ class ReservationService {
       await this.reservationRepository.findByCaravanIds(caravanIds);
     return reservations;
   }
+
+  async getReservationsForCaravan(caravanId) {
+    const reservations =
+      await this.reservationRepository.findByCaravanId(caravanId);
+    return reservations;
+  }
 }
 
 module.exports = ReservationService;
