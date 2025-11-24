@@ -1,24 +1,39 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const Map = ({ caravans, hoveredCaravanId }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const markers = useRef([]);
+  const [isMapReady, setMapReady] = useState(false);
 
-  // 1. Initialize map
+  // Poll for the Kakao Maps SDK to be loaded
   useEffect(() => {
-    if (window.kakao && window.kakao.maps) {
-      const options = {
-        center: new window.kakao.maps.LatLng(36.5, 127.5), // Default center of South Korea
-        level: 13,
-      };
-      map.current = new window.kakao.maps.Map(mapContainer.current, options);
-    }
+    const checkKakao = () => {
+      if (window.kakao && window.kakao.maps) {
+        window.kakao.maps.load(() => {
+          setMapReady(true);
+        });
+      } else {
+        setTimeout(checkKakao, 100); // Check again in 100ms
+      }
+    };
+    checkKakao();
   }, []);
+
+  // 1. Initialize map once the SDK is ready
+  useEffect(() => {
+    if (!isMapReady || !mapContainer.current) return;
+
+    const options = {
+      center: new window.kakao.maps.LatLng(36.5, 127.5),
+      level: 13,
+    };
+    map.current = new window.kakao.maps.Map(mapContainer.current, options);
+  }, [isMapReady]);
 
   // 2. Update markers and bounds when caravan list changes
   useEffect(() => {
-    if (!map.current || !window.kakao) return;
+    if (!isMapReady || !map.current || !window.kakao) return;
 
     // Clear existing markers
     markers.current.forEach((marker) => marker.setMap(null));
@@ -37,33 +52,31 @@ const Map = ({ caravans, hoveredCaravanId }) => {
       marker.setMap(map.current);
       bounds.extend(position);
 
-      // Store caravan id in marker for later reference
       marker.caravanId = caravan.id;
       return marker;
     });
 
     markers.current = newMarkers;
     map.current.setBounds(bounds);
-  }, [caravans]);
+  }, [caravans, isMapReady]);
 
   // 3. Highlight marker on hover
   useEffect(() => {
-    if (!map.current || !window.kakao) return;
+    if (!isMapReady || !map.current || !window.kakao) return;
 
     markers.current.forEach((marker) => {
       const isHovered = marker.caravanId === hoveredCaravanId;
-
-      // Example of highlighting: change marker image or size
-      // Here, we'll just change the z-index to bring it to the front
       marker.setZIndex(isHovered ? 10 : 0);
-
-      // For a more visible effect, you might use different marker images:
-      // const imageSrc = isHovered ? 'hovered_marker.png' : 'normal_marker.png';
-      // const imageSize = new window.kakao.maps.Size(36, 36);
-      // const markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
-      // marker.setImage(markerImage);
     });
-  }, [hoveredCaravanId]);
+  }, [hoveredCaravanId, isMapReady]);
+
+  if (!isMapReady) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gray-200">
+        <p>Loading map...</p>
+      </div>
+    );
+  }
 
   return (
     <div ref={mapContainer} className="w-full" style={{ height: "600px" }} />

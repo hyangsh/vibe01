@@ -109,7 +109,7 @@ export const savedReplies = [
 export const dummyCaravans = [
   // 서울/경기/인천
   {
-    id: "c01",
+    id: "692435e34d2acc703c3aad69",
     name: "서울 도심 캠핑카",
     regionCategory: "서울/경기/인천",
     lat: 37.5665,
@@ -118,7 +118,7 @@ export const dummyCaravans = [
     price: 150,
   },
   {
-    id: "c02",
+    id: "692435e34d2acc703c3aad6a",
     name: "인천대교 뷰 카라반",
     regionCategory: "서울/경기/인천",
     lat: 37.4733,
@@ -128,7 +128,7 @@ export const dummyCaravans = [
   },
   // 강릉/속초/양양
   {
-    id: "c03",
+    id: "692435e34d2acc703c3aad6b",
     name: "양양 서핑 카라반",
     regionCategory: "강릉/속초/양양",
     lat: 38.0581,
@@ -137,7 +137,7 @@ export const dummyCaravans = [
     price: 180,
   },
   {
-    id: "c04",
+    id: "692435e34d2acc703c3aad6c",
     name: "속초 바다정원",
     regionCategory: "강릉/속초/양양",
     lat: 38.2,
@@ -147,7 +147,7 @@ export const dummyCaravans = [
   },
   // 충주/단양/제천
   {
-    id: "c05",
+    id: "692435e34d2acc703c3aad6d",
     name: "단양 패러글라이딩 캠핑",
     regionCategory: "충주/단양/제천",
     lat: 36.9858,
@@ -157,7 +157,7 @@ export const dummyCaravans = [
   },
   // 포항/경주/대구
   {
-    id: "c06",
+    id: "692435e34d2acc703c3aad6e",
     name: "경주 역사탐방 카라반",
     regionCategory: "포항/경주/대구",
     lat: 35.8563,
@@ -167,7 +167,7 @@ export const dummyCaravans = [
   },
   // 대전/세종/충남
   {
-    id: "c07",
+    id: "692435e34d2acc703c3aad6f",
     name: "대전 시티뷰 캠핑",
     regionCategory: "대전/세종/충남",
     lat: 36.3504,
@@ -177,7 +177,7 @@ export const dummyCaravans = [
   },
   // 광주/전북/전남
   {
-    id: "c08",
+    id: "692435e34d2acc703c3aad70",
     name: "전주 한옥마을 근처",
     regionCategory: "광주/전북/전남",
     lat: 35.8152,
@@ -187,7 +187,7 @@ export const dummyCaravans = [
   },
   // 부산/울산/경남
   {
-    id: "c09",
+    id: "692435e34d2acc703c3aad71",
     name: "부산 해운대 오션뷰",
     regionCategory: "부산/울산/경남",
     lat: 35.1587,
@@ -197,7 +197,7 @@ export const dummyCaravans = [
   },
   // 제주
   {
-    id: "c10",
+    id: "692435e34d2acc703c3aad72",
     name: "제주 애월 해안도로",
     regionCategory: "제주",
     lat: 33.4617,
@@ -205,6 +205,7 @@ export const dummyCaravans = [
     image: "/images/caravans/photo10.jpg",
     price: 250,
   },
+  // Note: This caravan does not have a corresponding real ID, so it won't link correctly.
   {
     id: "c11",
     name: "제주 성산일출봉 캠핑",

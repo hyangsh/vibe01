@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { dummyCaravans } from "./dashboard/data";
-import Map from "./Map"; // Import the new Map component
+import Map from "./Map";
 
 const regionGroups = [
   "서울/경기/인천",
@@ -71,12 +72,13 @@ const SearchByRegion = () => {
           <div className="space-y-4">
             {filteredCaravans.length > 0 ? (
               filteredCaravans.map((caravan) => (
-                <CaravanListItem
-                  key={caravan.id}
-                  caravan={caravan}
-                  onMouseEnter={() => setHoveredCaravanId(caravan.id)}
-                  onMouseLeave={() => setHoveredCaravanId(null)}
-                />
+                <Link to={`/caravans/${caravan.id}`} key={caravan.id}>
+                  <CaravanListItem
+                    caravan={caravan}
+                    onMouseEnter={() => setHoveredCaravanId(caravan.id)}
+                    onMouseLeave={() => setHoveredCaravanId(null)}
+                  />
+                </Link>
               ))
             ) : (
               <p className="text-gray-500">
