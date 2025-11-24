@@ -14,6 +14,7 @@ const MyCaravansView = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // TEMPORARY CHANGE: Fetch all caravans for demonstration
         const [caravansRes, reservationsRes] = await Promise.all([
           axios.get("/api/caravans/my-caravans"),
           axios.get("/api/reservations/host"),
