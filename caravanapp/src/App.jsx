@@ -11,6 +11,7 @@ import Reservations from "./components/Reservations";
 import HostDashboard from "./components/HostDashboard";
 import Profile from "./components/Profile";
 import BookingConfirmation from "./components/BookingConfirmation";
+import SearchByRegion from "./components/SearchByRegion";
 import "./App.css";
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
             path="/booking-confirmation"
             element={<BookingConfirmation />}
           />
+          <Route path="/search" element={<SearchByRegion />} />
         </Routes>
       </main>
     </Router>

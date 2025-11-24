@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Calendar from "react-calendar";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import { processPayment } from "../utils/mockPayment";
 
@@ -17,7 +17,7 @@ const BookingWidget = ({ caravan }) => {
   useEffect(() => {
     const fetchBookedDates = async () => {
       try {
-        const res = await axios.get(`/api/reservations/caravan/${caravan._id}`);
+        const res = await api.get(`/reservations/caravan/${caravan._id}`);
         const dates = res.data.flatMap((reservation) => {
           if (reservation.status !== "confirmed") return [];
           const start = new Date(reservation.startDate);
@@ -100,16 +100,8 @@ const BookingWidget = ({ caravan }) => {
         transactionId: transaction.transactionId, // Add transactionId
       };
 
-      const token = localStorage.getItem("token");
-      const config = {
-        headers: { "Content-Type": "application/json", "x-auth-token": token },
-      };
-
-      const res = await axios.post(
-        "/api/reservations",
-        reservationBody,
-        config,
-      );
+      // The interceptor will add the token, so no need for manual config
+      const res = await api.post("/reservations", reservationBody);
 
       // 3. Redirect to confirmation page
       navigate("/booking-confirmation", {

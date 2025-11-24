@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
@@ -21,22 +21,18 @@ const Login = () => {
     setError("");
     setLoading(true);
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/users/login",
-        formData,
-      );
+      const res = await api.post("/users/login", formData);
       const { token } = res.data;
 
       localStorage.setItem("token", token);
-      axios.defaults.headers.common["x-auth-token"] = token;
 
+      // The interceptor will now handle the header for subsequent requests
       navigate("/");
     } catch (err) {
       setError(
         err.response?.data?.msg || "Login failed. Please check credentials.",
       );
       localStorage.removeItem("token");
-      delete axios.defaults.headers.common["x-auth-token"];
     } finally {
       setLoading(false);
     }

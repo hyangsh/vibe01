@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
@@ -33,7 +33,7 @@ const Profile = () => {
 
     const fetchUser = async () => {
       try {
-        const res = await axios.get(`/api/users/${userId}`);
+        const res = await api.get(`/users/${userId}`);
         setUser(res.data);
       } catch (err) {
         console.error(err);
@@ -43,7 +43,7 @@ const Profile = () => {
 
     const fetchReviews = async () => {
       try {
-        const res = await axios.get(`/api/reviews/user/${userId}`);
+        const res = await api.get(`/reviews/user/${userId}`);
         setReviews(res.data);
       } catch (err) {
         // It's okay if fetching reviews fails, we can still show the profile

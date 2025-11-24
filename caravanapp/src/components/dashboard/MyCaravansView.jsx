@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import CaravanCard from "./CaravanCard";
 import Modal from "./Modal";
 import AvailabilityCalendar from "./AvailabilityCalendar";
@@ -14,10 +14,9 @@ const MyCaravansView = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // TEMPORARY CHANGE: Fetch all caravans for demonstration
         const [caravansRes, reservationsRes] = await Promise.all([
-          axios.get("/api/caravans/my-caravans"),
-          axios.get("/api/reservations/host"),
+          api.get("/caravans/my-caravans"),
+          api.get("/reservations/host"),
         ]);
         setCaravans(caravansRes.data);
         setReservations(reservationsRes.data);

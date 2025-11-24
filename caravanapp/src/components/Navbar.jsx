@@ -10,6 +10,7 @@ const Navbar = () => {
 
   const navLinks = [
     { to: "/caravans", text: "Caravans" },
+    { to: "/search", text: "Search by Region" },
     { to: "/create-caravan", text: "Create Caravan" },
     { to: "/reservations", text: "My Reservations" },
     { to: "/host-dashboard", text: "Host Dashboard" },

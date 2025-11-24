@@ -20,7 +20,6 @@ export const occupancyRateData = [
 ];
 
 // Dummy data for the messaging interface
-
 export const conversations = [
   {
     id: 1,
@@ -103,5 +102,116 @@ export const savedReplies = [
     id: "reply3",
     title: "Wi-Fi Details",
     text: 'The Wi-Fi network is "CaravanNet" and the password is "adventure123". Enjoy your stay!',
+  },
+];
+
+// Dummy data for the Search by Region page
+export const dummyCaravans = [
+  // 서울/경기/인천
+  {
+    id: "c01",
+    name: "서울 도심 캠핑카",
+    regionCategory: "서울/경기/인천",
+    lat: 37.5665,
+    lng: 126.978,
+    image: "/images/caravans/photo1.jpg",
+    price: 150,
+  },
+  {
+    id: "c02",
+    name: "인천대교 뷰 카라반",
+    regionCategory: "서울/경기/인천",
+    lat: 37.4733,
+    lng: 126.6195,
+    image: "/images/caravans/photo2.jpg",
+    price: 130,
+  },
+  // 강릉/속초/양양
+  {
+    id: "c03",
+    name: "양양 서핑 카라반",
+    regionCategory: "강릉/속초/양양",
+    lat: 38.0581,
+    lng: 128.6229,
+    image: "/images/caravans/photo3.jpg",
+    price: 180,
+  },
+  {
+    id: "c04",
+    name: "속초 바다정원",
+    regionCategory: "강릉/속초/양양",
+    lat: 38.2,
+    lng: 128.59,
+    image: "/images/caravans/photo4.jpg",
+    price: 200,
+  },
+  // 충주/단양/제천
+  {
+    id: "c05",
+    name: "단양 패러글라이딩 캠핑",
+    regionCategory: "충주/단양/제천",
+    lat: 36.9858,
+    lng: 128.3692,
+    image: "/images/caravans/photo5.jpg",
+    price: 160,
+  },
+  // 포항/경주/대구
+  {
+    id: "c06",
+    name: "경주 역사탐방 카라반",
+    regionCategory: "포항/경주/대구",
+    lat: 35.8563,
+    lng: 129.2244,
+    image: "/images/caravans/photo6.jpg",
+    price: 140,
+  },
+  // 대전/세종/충남
+  {
+    id: "c07",
+    name: "대전 시티뷰 캠핑",
+    regionCategory: "대전/세종/충남",
+    lat: 36.3504,
+    lng: 127.3845,
+    image: "/images/caravans/photo7.jpg",
+    price: 120,
+  },
+  // 광주/전북/전남
+  {
+    id: "c08",
+    name: "전주 한옥마을 근처",
+    regionCategory: "광주/전북/전남",
+    lat: 35.8152,
+    lng: 127.153,
+    image: "/images/caravans/photo8.jpg",
+    price: 135,
+  },
+  // 부산/울산/경남
+  {
+    id: "c09",
+    name: "부산 해운대 오션뷰",
+    regionCategory: "부산/울산/경남",
+    lat: 35.1587,
+    lng: 129.1604,
+    image: "/images/caravans/photo9.jpg",
+    price: 220,
+  },
+  // 제주
+  {
+    id: "c10",
+    name: "제주 애월 해안도로",
+    regionCategory: "제주",
+    lat: 33.4617,
+    lng: 126.3105,
+    image: "/images/caravans/photo10.jpg",
+    price: 250,
+  },
+  {
+    id: "c11",
+    name: "제주 성산일출봉 캠핑",
+    regionCategory: "제주",
+    lat: 33.458,
+    lng: 126.9423,
+    image: "/images/caravans/photo11.jpg",
+    price: 240,
   },
 ];

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useNavigate, Link } from "react-router-dom";
 
 const Register = () => {
@@ -23,7 +23,7 @@ const Register = () => {
     setError("");
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/users/register", formData);
+      await api.post("/users/register", formData);
       navigate("/login");
     } catch (err) {
       setError(

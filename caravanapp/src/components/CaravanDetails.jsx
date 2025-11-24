@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import { useParams } from "react-router-dom";
 import BookingWidget from "./BookingWidget"; // Import the new widget
 
@@ -11,7 +11,7 @@ const CaravanDetails = () => {
   useEffect(() => {
     const fetchCaravan = async () => {
       try {
-        const res = await axios.get(`/api/caravans/${id}`);
+        const res = await api.get(`/caravans/${id}`);
         setCaravan(res.data);
       } catch (err) {
         console.error(err);
@@ -20,7 +20,7 @@ const CaravanDetails = () => {
     const fetchReviews = async () => {
       try {
         // Assuming this endpoint exists for fetching reviews for a caravan
-        const res = await axios.get(`/api/reviews/caravan/${id}`);
+        const res = await api.get(`/reviews/caravan/${id}`);
         setReviews(res.data);
       } catch (err) {
         console.error("Could not fetch reviews for this caravan.", err);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import Card from "./Card"; // Assuming Card.jsx is in the same directory
 
 const Home = () => {
@@ -9,7 +9,7 @@ const Home = () => {
   useEffect(() => {
     const fetchCaravans = async () => {
       try {
-        const res = await axios.get("/api/caravans");
+        const res = await api.get("/caravans");
         setCaravans(res.data);
       } catch (err) {
         console.error("Error fetching caravans:", err);

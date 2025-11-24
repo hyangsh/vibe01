@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import Card from "./Card"; // Import the new Card component
 
 const CaravanList = () => {
@@ -9,7 +9,7 @@ const CaravanList = () => {
     const fetchCaravans = async () => {
       try {
         // The proxy in vite.config.js will handle the full URL
-        const res = await axios.get("/api/caravans");
+        const res = await api.get("/caravans");
         setCaravans(res.data);
       } catch (err) {
         console.error("Error fetching caravans:", err);
