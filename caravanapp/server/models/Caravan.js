@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const CaravanSchema = new mongoose.Schema({
   host: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     required: true,
   },
   name: {
@@ -22,12 +22,16 @@ const CaravanSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['available', 'reserved', 'maintenance'],
-    default: 'available',
+    enum: ["available", "reserved", "maintenance"],
+    default: "available",
   },
   dailyRate: {
     type: Number,
     required: true,
+  },
+  blockedDates: {
+    type: [Date],
+    default: [],
   },
   createdAt: {
     type: Date,
@@ -35,4 +39,4 @@ const CaravanSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('Caravan', CaravanSchema);
+module.exports = mongoose.model("Caravan", CaravanSchema);

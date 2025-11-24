@@ -1,4 +1,4 @@
-const Reservation = require('../models/Reservation');
+const Reservation = require("../models/Reservation");
 
 class ReservationRepository {
   async create(reservationData) {

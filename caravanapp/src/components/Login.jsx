@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -18,20 +18,25 @@ const Login = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:5000/api/users/login', formData);
+      const res = await axios.post(
+        "http://localhost:5000/api/users/login",
+        formData,
+      );
       const { token } = res.data;
-      
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['x-auth-token'] = token;
-      
-      navigate('/');
+
+      localStorage.setItem("token", token);
+      axios.defaults.headers.common["x-auth-token"] = token;
+
+      navigate("/");
     } catch (err) {
-      setError(err.response?.data?.msg || 'Login failed. Please check credentials.');
-      localStorage.removeItem('token');
-      delete axios.defaults.headers.common['x-auth-token'];
+      setError(
+        err.response?.data?.msg || "Login failed. Please check credentials.",
+      );
+      localStorage.removeItem("token");
+      delete axios.defaults.headers.common["x-auth-token"];
     } finally {
       setLoading(false);
     }
@@ -40,7 +45,9 @@ const Login = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
-        <h1 className="text-3xl font-bold text-center text-gray-900">Log in to your Account</h1>
+        <h1 className="text-3xl font-bold text-center text-gray-900">
+          Log in to your Account
+        </h1>
         <form onSubmit={onSubmit} className="space-y-6">
           {error && (
             <div className="p-3 text-center text-sm text-red-800 bg-red-100 rounded-lg">
@@ -48,7 +55,9 @@ const Login = () => {
             </div>
           )}
           <div>
-            <label htmlFor="email" className="sr-only">Email</label>
+            <label htmlFor="email" className="sr-only">
+              Email
+            </label>
             <input
               id="email"
               type="email"
@@ -61,7 +70,9 @@ const Login = () => {
             />
           </div>
           <div>
-            <label htmlFor="password" className="sr-only">Password</label>
+            <label htmlFor="password" className="sr-only">
+              Password
+            </label>
             <input
               id="password"
               type="password"
@@ -80,13 +91,16 @@ const Login = () => {
               disabled={loading}
               className="w-full btn-cta-black disabled:bg-gray-400"
             >
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? "Logging in..." : "Login"}
             </button>
           </div>
         </form>
         <p className="text-sm text-center text-gray-600">
-          Need an account?{' '}
-          <Link to="/register" className="font-medium text-orange-600 hover:text-orange-500">
+          Need an account?{" "}
+          <Link
+            to="/register"
+            className="font-medium text-orange-600 hover:text-orange-500"
+          >
             Register
           </Link>
         </p>

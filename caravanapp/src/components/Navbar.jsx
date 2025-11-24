@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,13 +9,13 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { to: '/caravans', text: 'Caravans' },
-    { to: '/create-caravan', text: 'Create Caravan' },
-    { to: '/reservations', text: 'My Reservations' },
-    { to: '/host-dashboard', text: 'Host Dashboard' },
-    { to: '/users/60d5f3f7a3b7a82b5c8d3d8e', text: 'Profile' },
-    { to: '/login', text: 'Login' },
-    { to: '/register', text: 'Register' },
+    { to: "/caravans", text: "Caravans" },
+    { to: "/create-caravan", text: "Create Caravan" },
+    { to: "/reservations", text: "My Reservations" },
+    { to: "/host-dashboard", text: "Host Dashboard" },
+    { to: "/profile", text: "Profile" },
+    { to: "/login", text: "Login" },
+    { to: "/register", text: "Register" },
   ];
 
   return (
@@ -49,7 +49,7 @@ const Navbar = () => {
       {/* Overlay */}
       <div
         className={`fixed inset-0 bg-black bg-opacity-50 z-10 transition-opacity duration-300 ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={toggleDrawer}
       ></div>
@@ -57,7 +57,7 @@ const Navbar = () => {
       {/* Drawer */}
       <div
         className={`fixed top-0 right-0 h-full bg-white shadow-lg z-20 transition-transform duration-300 ease-in-out w-full sm:w-80 md:w-96 ${
-          isOpen ? 'transform translate-x-0' : 'transform translate-x-full'
+          isOpen ? "transform translate-x-0" : "transform translate-x-full"
         }`}
       >
         <div className="flex justify-end p-4">

@@ -1,13 +1,13 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const auth = require('../middleware/auth');
-const container = require('../core/bootstrap');
-const ReviewService = container.resolve('reviewService');
+const auth = require("../middleware/auth");
+const container = require("../core/bootstrap");
+const ReviewService = container.resolve("reviewService");
 
 // @route   POST api/reviews
 // @desc    Create a new review
 // @access  Private
-router.post('/', auth, async (req, res) => {
+router.post("/", auth, async (req, res) => {
   try {
     const review = await ReviewService.createReview(req.user.id, req.body);
     res.json(review);
@@ -19,7 +19,7 @@ router.post('/', auth, async (req, res) => {
 // @route   GET api/reviews/user/:userId
 // @desc    Get all reviews for a user
 // @access  Public
-router.get('/user/:userId', async (req, res) => {
+router.get("/user/:userId", async (req, res) => {
   try {
     const reviews = await ReviewService.getReviewsForUser(req.params.userId);
     res.json(reviews);
@@ -31,10 +31,10 @@ router.get('/user/:userId', async (req, res) => {
 // @route   GET api/reviews/caravan/:caravanId
 // @desc    Get all reviews for a caravan
 // @access  Public
-router.get('/caravan/:caravanId', async (req, res) => {
+router.get("/caravan/:caravanId", async (req, res) => {
   try {
     const reviews = await ReviewService.getReviewsForCaravan(
-      req.params.caravanId
+      req.params.caravanId,
     );
     res.json(reviews);
   } catch (err) {

@@ -1,4 +1,4 @@
-const Caravan = require('../models/Caravan');
+const Caravan = require("../models/Caravan");
 
 class CaravanRepository {
   async findById(id) {

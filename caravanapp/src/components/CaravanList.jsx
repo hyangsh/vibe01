@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import Card from "./Card"; // Import the new Card component
 
 const CaravanList = () => {
   const [caravans, setCaravans] = useState([]);
@@ -8,31 +8,28 @@ const CaravanList = () => {
   useEffect(() => {
     const fetchCaravans = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/caravans');
+        // The proxy in vite.config.js will handle the full URL
+        const res = await axios.get("/api/caravans");
         setCaravans(res.data);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching caravans:", err);
       }
     };
     fetchCaravans();
   }, []);
 
   return (
-    <div>
-      <h1>Caravans</h1>
-      <div>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+        Explore Our Caravans
+      </h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {caravans.map((caravan) => (
-          <div key={caravan._id}>
-            <h2>
-              <Link to={`/caravans/${caravan._id}`}>{caravan.name}</Link>
-            </h2>
-            <p>{caravan.location}</p>
-            <p>${caravan.dailyRate} per day</p>
-          </div>
+          <Card key={caravan._id} item={caravan} />
         ))}
       </div>
     </div>
   );
-  };
+};
 
 export default CaravanList;

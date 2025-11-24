@@ -1,4 +1,4 @@
-const DiscountStrategy = require('./DiscountStrategy');
+const DiscountStrategy = require("./DiscountStrategy");
 
 class SeasonalDiscount extends DiscountStrategy {
   constructor(discountRate) {

@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    userType: 'guest',
+    name: "",
+    email: "",
+    password: "",
+    userType: "guest",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -20,13 +20,15 @@ const Register = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
     try {
-      await axios.post('http://localhost:5000/api/users/register', formData);
-      navigate('/login');
+      await axios.post("http://localhost:5000/api/users/register", formData);
+      navigate("/login");
     } catch (err) {
-      setError(err.response?.data?.msg || 'Registration failed. Please try again.');
+      setError(
+        err.response?.data?.msg || "Registration failed. Please try again.",
+      );
       console.error(err.response?.data);
     } finally {
       setLoading(false);
@@ -36,7 +38,9 @@ const Register = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
-        <h1 className="text-3xl font-bold text-center text-gray-900">Create an Account</h1>
+        <h1 className="text-3xl font-bold text-center text-gray-900">
+          Create an Account
+        </h1>
         <form onSubmit={onSubmit} className="space-y-6">
           {error && (
             <div className="p-3 text-center text-sm text-red-800 bg-red-100 rounded-lg">
@@ -44,7 +48,9 @@ const Register = () => {
             </div>
           )}
           <div>
-            <label htmlFor="name" className="sr-only">Name</label>
+            <label htmlFor="name" className="sr-only">
+              Name
+            </label>
             <input
               id="name"
               type="text"
@@ -57,7 +63,9 @@ const Register = () => {
             />
           </div>
           <div>
-            <label htmlFor="email" className="sr-only">Email</label>
+            <label htmlFor="email" className="sr-only">
+              Email
+            </label>
             <input
               id="email"
               type="email"
@@ -70,7 +78,9 @@ const Register = () => {
             />
           </div>
           <div>
-            <label htmlFor="password" className="sr-only">Password</label>
+            <label htmlFor="password" className="sr-only">
+              Password
+            </label>
             <input
               id="password"
               type="password"
@@ -84,7 +94,12 @@ const Register = () => {
             />
           </div>
           <div>
-            <label htmlFor="userType" className="block text-sm font-medium text-gray-700">I am a:</label>
+            <label
+              htmlFor="userType"
+              className="block text-sm font-medium text-gray-700"
+            >
+              I am a:
+            </label>
             <select
               id="userType"
               name="userType"
@@ -102,13 +117,16 @@ const Register = () => {
               disabled={loading}
               className="w-full btn-cta-orange disabled:bg-orange-300"
             >
-              {loading ? 'Registering...' : 'Register'}
+              {loading ? "Registering..." : "Register"}
             </button>
           </div>
         </form>
         <p className="text-sm text-center text-gray-600">
-          Already have an account?{' '}
-          <Link to="/login" className="font-medium text-orange-600 hover:text-orange-500">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="font-medium text-orange-600 hover:text-orange-500"
+          >
             Log in
           </Link>
         </p>

@@ -1,22 +1,21 @@
-const Review = require('../models/Review');
-const Reservation = require('../models/Reservation');
-const NotFoundError = require('../core/errors/NotFoundError');
-const ValidationError = require('../core/errors/ValidationError');
-const AuthorizationError = require('../core/errors/AuthorizationError');
+const Review = require("../models/Review");
+const Reservation = require("../models/Reservation");
+const NotFoundError = require("../core/errors/NotFoundError");
+const ValidationError = require("../core/errors/ValidationError");
+const AuthorizationError = require("../core/errors/AuthorizationError");
 
 class ReviewService {
   async createReview(userId, reviewData) {
     const { reservationId, rating, comment } = reviewData;
 
-    const reservation = await Reservation.findById(reservationId).populate(
-      'caravan'
-    );
+    const reservation =
+      await Reservation.findById(reservationId).populate("caravan");
     if (!reservation) {
-      throw new NotFoundError('Reservation not found');
+      throw new NotFoundError("Reservation not found");
     }
 
-    if (reservation.status !== 'completed') {
-      throw new ValidationError('Reservation not completed yet');
+    if (reservation.status !== "completed") {
+      throw new ValidationError("Reservation not completed yet");
     }
 
     const guest = reservation.guest.toString();
@@ -28,7 +27,7 @@ class ReviewService {
     } else if (userId === host) {
       reviewee = guest;
     } else {
-      throw new AuthorizationError('User not authorized');
+      throw new AuthorizationError("User not authorized");
     }
 
     const newReview = new Review({
@@ -45,8 +44,8 @@ class ReviewService {
 
   async getReviewsForUser(userId) {
     const reviews = await Review.find({ reviewee: userId }).populate(
-      'reviewer',
-      ['name']
+      "reviewer",
+      ["name"],
     );
     return reviews;
   }
@@ -56,7 +55,7 @@ class ReviewService {
     const reservationIds = reservations.map((res) => res._id);
     const reviews = await Review.find({
       reservation: { $in: reservationIds },
-    }).populate('reviewer', ['name']);
+    }).populate("reviewer", ["name"]);
     return reviews;
   }
 }

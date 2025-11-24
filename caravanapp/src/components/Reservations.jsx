@@ -1,22 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const ReviewForm = ({ reservationId }) => {
   const [rating, setRating] = useState(5);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     const config = {
       headers: {
-        'Content-Type': 'application/json',
-        'x-auth-token': token,
+        "Content-Type": "application/json",
+        "x-auth-token": token,
       },
     };
     const body = JSON.stringify({ reservationId, rating, comment });
     try {
-      const res = await axios.post('http://localhost:5000/api/reviews', body, config);
+      const res = await axios.post(
+        "http://localhost:5000/api/reviews",
+        body,
+        config,
+      );
       console.log(res.data);
     } catch (err) {
       console.error(err.response.data);
@@ -38,7 +42,10 @@ const ReviewForm = ({ reservationId }) => {
       </div>
       <div>
         <label>Comment</label>
-        <textarea value={comment} onChange={(e) => setComment(e.target.value)}></textarea>
+        <textarea
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+        ></textarea>
       </div>
       <button type="submit">Submit Review</button>
     </form>
@@ -50,14 +57,17 @@ const Reservations = () => {
 
   useEffect(() => {
     const fetchReservations = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const config = {
         headers: {
-          'x-auth-token': token,
+          "x-auth-token": token,
         },
       };
       try {
-        const res = await axios.get('http://localhost:5000/api/reservations', config);
+        const res = await axios.get(
+          "http://localhost:5000/api/reservations",
+          config,
+        );
         setReservations(res.data);
       } catch (err) {
         console.error(err);
@@ -77,7 +87,9 @@ const Reservations = () => {
             <p>To: {new Date(reservation.endDate).toLocaleDateString()}</p>
             <p>Total: ${reservation.totalPrice}</p>
             <p>Status: {reservation.status}</p>
-            {reservation.status === 'completed' && <ReviewForm reservationId={reservation._id} />}
+            {reservation.status === "completed" && (
+              <ReviewForm reservationId={reservation._id} />
+            )}
           </div>
         ))}
       </div>
@@ -86,4 +98,3 @@ const Reservations = () => {
 };
 
 export default Reservations;
-

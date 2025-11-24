@@ -1,11 +1,11 @@
-const NotFoundError = require('../core/errors/NotFoundError');
-const AuthorizationError = require('../core/errors/AuthorizationError');
-const ReservationRepository = require('../repositories/ReservationRepository');
-const CaravanRepository = require('../repositories/CaravanRepository');
-const ReservationFactory = require('./ReservationFactory');
-const NoDiscount = require('./discount/NoDiscount');
-const ReservationNotifier = require('./notification/ReservationNotifier');
-const EmailNotifier = require('./notification/EmailNotifier');
+const NotFoundError = require("../core/errors/NotFoundError");
+const AuthorizationError = require("../core/errors/AuthorizationError");
+const ReservationRepository = require("../repositories/ReservationRepository");
+const CaravanRepository = require("../repositories/CaravanRepository");
+const ReservationFactory = require("./ReservationFactory");
+const NoDiscount = require("./discount/NoDiscount");
+const ReservationNotifier = require("./notification/ReservationNotifier");
+const EmailNotifier = require("./notification/EmailNotifier");
 
 const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 
@@ -43,12 +43,13 @@ class ReservationService {
       totalPrice: this._calculateTotalPrice(
         startDate,
         endDate,
-        caravanToBook.dailyRate
+        caravanToBook.dailyRate,
       ),
     };
 
     const reservation = this.reservationFactory.create(newReservationData);
-    const savedReservation = await this.reservationRepository.create(reservation);
+    const savedReservation =
+      await this.reservationRepository.create(reservation);
 
     this.reservationNotifier.notify(savedReservation);
 
@@ -61,10 +62,11 @@ class ReservationService {
   }
 
   async getReservationById(userId, reservationId) {
-    const reservation = await this.reservationRepository.findById(reservationId);
+    const reservation =
+      await this.reservationRepository.findById(reservationId);
 
     if (!reservation) {
-      throw new NotFoundError('Reservation not found');
+      throw new NotFoundError("Reservation not found");
     }
 
     const caravan = await this.caravanRepository.findById(reservation.caravan);
@@ -72,7 +74,7 @@ class ReservationService {
       reservation.guest.toString() !== userId &&
       caravan.host.toString() !== userId
     ) {
-      throw new AuthorizationError('User not authorized');
+      throw new AuthorizationError("User not authorized");
     }
     return reservation;
   }
@@ -81,12 +83,12 @@ class ReservationService {
     let reservation = await this.reservationRepository.findById(reservationId);
 
     if (!reservation) {
-      throw new NotFoundError('Reservation not found');
+      throw new NotFoundError("Reservation not found");
     }
 
     const caravan = await this.caravanRepository.findById(reservation.caravan);
     if (caravan.host.toString() !== userId) {
-      throw new AuthorizationError('User not authorized');
+      throw new AuthorizationError("User not authorized");
     }
 
     reservation = await this.reservationRepository.update(reservationId, {
@@ -99,9 +101,8 @@ class ReservationService {
   async getReservationsForHost(userId) {
     const caravans = await this.caravanRepository.findByHostId(userId);
     const caravanIds = caravans.map((caravan) => caravan._id);
-    const reservations = await this.reservationRepository.findByCaravanIds(
-      caravanIds
-    );
+    const reservations =
+      await this.reservationRepository.findByCaravanIds(caravanIds);
     return reservations;
   }
 }

@@ -17,7 +17,7 @@ const container = {
       throw new Error(`Service not found: ${name}`);
     }
 
-    if (typeof service.definition === 'function') {
+    if (typeof service.definition === "function") {
       const dependencies = service.dependencies.map((dep) => this.resolve(dep));
       const instance = new service.definition(...dependencies);
       this._instances.set(name, instance);

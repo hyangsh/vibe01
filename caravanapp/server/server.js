@@ -1,7 +1,7 @@
-const express = require('express');
-const cors = require('cors');
-const connectDB = require('./config/db');
-const ReservationRepository = require('./repositories/ReservationRepository');
+const express = require("express");
+const cors = require("cors");
+const connectDB = require("./config/db");
+const ReservationRepository = require("./repositories/ReservationRepository");
 
 // Connect Database
 const startServer = async () => {
@@ -12,15 +12,15 @@ const startServer = async () => {
   app.use(cors());
   app.use(express.json());
 
-  app.get('/', (req, res) => {
-    res.send('CaravanShare API is running...');
+  app.get("/", (req, res) => {
+    res.send("CaravanShare API is running...");
   });
 
   // Define Routes
-  app.use('/api/users', require('./routes/users'));
-  app.use('/api/caravans', require('./routes/caravans'));
-  app.use('/api/reservations', require('./routes/reservations'));
-  app.use('/api/reviews', require('./routes/reviews'));
+  app.use("/api/users", require("./routes/users"));
+  app.use("/api/caravans", require("./routes/caravans"));
+  app.use("/api/reservations", require("./routes/reservations"));
+  app.use("/api/reviews", require("./routes/reviews"));
 
   const PORT = process.env.PORT || 5000;
 

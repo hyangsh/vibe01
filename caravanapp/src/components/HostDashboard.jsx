@@ -1,72 +1,50 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import Sidebar from "./dashboard/Sidebar";
+import Header from "./dashboard/Header";
+import OverviewView from "./dashboard/OverviewView";
+import MyCaravansView from "./dashboard/MyCaravansView";
+import ReservationsView from "./dashboard/ReservationsView";
+import MessagingView from "./dashboard/MessagingView"; // Import the new view
+
+const PlaceholderView = ({ title }) => (
+  <div>
+    <h2 className="text-2xl font-bold mb-6">{title}</h2>
+    <div className="bg-white p-6 rounded-lg shadow">
+      <p>
+        This is a placeholder for the {title} view. Content will be added soon.
+      </p>
+    </div>
+  </div>
+);
 
 const HostDashboard = () => {
-  const [reservations, setReservations] = useState([]);
+  const [activeView, setActiveView] = useState("Overview");
 
-  useEffect(() => {
-    const fetchReservations = async () => {
-      const token = localStorage.getItem('token');
-      const config = {
-        headers: {
-          'x-auth-token': token,
-        },
-      };
-      try {
-        // This endpoint needs to be created on the backend
-        const res = await axios.get('http://localhost:5000/api/reservations/host', config);
-        setReservations(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchReservations();
-  }, []);
-
-  const handleUpdateStatus = async (id, status) => {
-    const token = localStorage.getItem('token');
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-auth-token': token,
-      },
-    };
-    const body = JSON.stringify({ status });
-    try {
-      const res = await axios.put(`http://localhost:5000/api/reservations/${id}`, body, config);
-      setReservations(
-        reservations.map((reservation) =>
-          reservation._id === id ? { ...reservation, status: res.data.status } : reservation
-        )
-      );
-    } catch (err) {
-      console.error(err.response.data);
+  const renderView = () => {
+    switch (activeView) {
+      case "Overview":
+        return <OverviewView />;
+      case "My Caravans":
+        return <MyCaravansView />;
+      case "Reservations":
+        return <ReservationsView />;
+      case "Messaging":
+        return <MessagingView />; // Render the new component
+      case "Maintenance Log":
+        return <PlaceholderView title="Maintenance Log" />;
+      case "Settings":
+        return <PlaceholderView title="Settings" />;
+      default:
+        return <OverviewView />;
     }
   };
 
   return (
-    <div>
-      <h1>Host Dashboard</h1>
-      <div>
-        {reservations.map((reservation) => (
-          <div key={reservation._id}>
-            <h2>{reservation.caravan.name}</h2>
-            <p>Guest: {reservation.guest.name}</p>
-            <p>From: {new Date(reservation.startDate).toLocaleDateString()}</p>
-            <p>To: {new Date(reservation.endDate).toLocaleDateString()}</p>
-            <p>Status: {reservation.status}</p>
-            {reservation.status === 'pending' && (
-              <div>
-                <button onClick={() => handleUpdateStatus(reservation._id, 'approved')}>
-                  Approve
-                </button>
-                <button onClick={() => handleUpdateStatus(reservation._id, 'rejected')}>
-                  Reject
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
+    <div className="flex bg-gray-100 min-h-screen">
+      <Sidebar activeView={activeView} setActiveView={setActiveView} />
+      <div className="flex-1 flex flex-col">
+        <Header />
+        <main className="p-6">{renderView()}</main>
       </div>
     </div>
   );

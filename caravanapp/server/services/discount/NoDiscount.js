@@ -1,4 +1,4 @@
-const DiscountStrategy = require('./DiscountStrategy');
+const DiscountStrategy = require("./DiscountStrategy");
 
 class NoDiscount extends DiscountStrategy {
   calculateDiscount(price) {
