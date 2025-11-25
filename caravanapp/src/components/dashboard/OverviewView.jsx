@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Bar,
   BarChart,
@@ -17,7 +17,7 @@ import {
   StarIcon,
   CalendarDaysIcon,
 } from "@heroicons/react/24/outline";
-import { summaryStats, monthlyEarningsData, occupancyRateData } from "./data";
+import { getDashboardSummary } from "../../utils/api";
 
 const StatCard = ({ title, value, icon, unit = "" }) => (
   <div className="bg-white p-4 rounded-lg shadow">
@@ -37,6 +37,40 @@ const StatCard = ({ title, value, icon, unit = "" }) => (
 );
 
 const OverviewView = () => {
+  const [summaryData, setSummaryData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        const { data } = await getDashboardSummary();
+        setSummaryData(data);
+      } catch (err) {
+        setError("Failed to fetch summary data.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSummary();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
+
+  if (!summaryData) {
+    return <div>No summary data available.</div>;
+  }
+
+  const { summaryStats, monthlyEarningsData, occupancyRateData } = summaryData;
+
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
@@ -125,5 +159,4 @@ const OverviewView = () => {
     </div>
   );
 };
-
 export default OverviewView;

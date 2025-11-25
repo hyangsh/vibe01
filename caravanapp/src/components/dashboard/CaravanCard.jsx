@@ -1,7 +1,7 @@
 import React from "react";
 import { PencilIcon, CalendarDaysIcon } from "@heroicons/react/24/solid";
 
-const CaravanCard = ({ caravan, onOpenCalendar }) => {
+const CaravanCard = ({ caravan, onOpenCalendar, onEdit }) => {
   const { name, photos, status } = caravan;
 
   const getStatusBadgeColor = () => {
@@ -40,7 +40,9 @@ const CaravanCard = ({ caravan, onOpenCalendar }) => {
           </span>
         </div>
         <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end space-x-3">
-          <button className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          <button
+            onClick={onEdit}
+            className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
             <PencilIcon className="h-5 w-5 text-gray-500 mr-2" />
             Edit
           </button>
@@ -56,5 +58,7 @@ const CaravanCard = ({ caravan, onOpenCalendar }) => {
     </div>
   );
 };
+
+export default CaravanCard;
 
 export default CaravanCard;

@@ -7,7 +7,16 @@ class ReservationRepository {
   }
 
   async findById(id) {
-    return await Reservation.findById(id);
+    return await Reservation.findById(id)
+      .populate("guest", "name")
+      .populate({
+        path: "caravan",
+        select: "name host",
+        populate: {
+          path: "host",
+          select: "name"
+        }
+      });
   }
 
   async findByCaravanId(caravanId) {
@@ -15,7 +24,9 @@ class ReservationRepository {
   }
 
   async findByCaravanIds(caravanIds) {
-    return await Reservation.find({ caravan: { $in: caravanIds } });
+    return await Reservation.find({ caravan: { $in: caravanIds } })
+      .populate("guest", "name")
+      .populate("caravan", "name");
   }
 
   async findByUserId(userId) {

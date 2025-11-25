@@ -24,4 +24,15 @@ api.interceptors.request.use(
   },
 );
 
+export const getDashboardSummary = () => api.get("/dashboard/summary");
+
+// Messaging
+export const getConversations = () => api.get("/messaging");
+export const getMessages = (conversationId) => api.get(`/messaging/${conversationId}/messages`);
+export const sendMessage = (conversationId, text) => api.post(`/messaging/${conversationId}/messages`, { text });
+export const findOrCreateConversation = (reservationId) => api.post(`/messaging/reservations/${reservationId}`);
+
+// User
+export const getMe = () => api.get("/users/me");
+
 export default api;

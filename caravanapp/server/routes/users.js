@@ -1,7 +1,21 @@
 const express = require("express");
 const router = express.Router();
 const container = require("../core/bootstrap");
+const auth = require("../middleware/auth");
+const auth = require("../middleware/auth");
 const UserService = container.resolve("userService");
+
+// @route   GET api/users/me
+// @desc    Get current user
+// @access  Private
+router.get("/me", auth, async (req, res) => {
+    try {
+      const user = await UserService.getUserById(req.user.id);
+      res.json(user);
+    } catch (err) {
+        res.status(404).json({ msg: err.message });
+    }
+});
 
 // @route   POST api/users/register
 // @desc    Register a new user
