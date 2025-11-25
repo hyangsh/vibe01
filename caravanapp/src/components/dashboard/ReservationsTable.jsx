@@ -10,8 +10,9 @@ const StatusBadge = ({ status }) => {
   const baseClasses = "px-2.5 py-0.5 text-xs font-medium rounded-full";
   const statusClasses = {
     pending: "bg-yellow-100 text-yellow-800",
-    confirmed: "bg-green-100 text-green-800",
+    approved: "bg-green-100 text-green-800",
     completed: "bg-blue-100 text-blue-800",
+    rejected: "bg-red-100 text-red-800",
     cancelled: "bg-red-100 text-red-800",
   };
   return (
@@ -103,7 +104,7 @@ const ReservationsTable = ({ reservations, onAccept, onReject }) => {
                     </button>
                   </>
                 )}
-                {reservation.status === "confirmed" && (
+                {reservation.status === "approved" && (
                   <>
                     <button className="text-indigo-600 hover:text-indigo-900">
                       <EyeIcon className="w-5 h-5" />

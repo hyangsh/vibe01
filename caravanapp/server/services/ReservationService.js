@@ -13,15 +13,24 @@ const EmailNotifier = require("./notification/EmailNotifier");
 const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 
 class ReservationService {
-  constructor(reservationValidator) {
+  constructor(
+    reservationValidator,
+    reservationRepository,
+    caravanRepository,
+    paymentHistoryRepository,
+    reservationFactory,
+    discountStrategy,
+    reservationNotifier,
+    emailNotifier
+  ) {
     this.reservationValidator = reservationValidator;
-    this.reservationRepository = new ReservationRepository();
-    this.caravanRepository = new CaravanRepository();
-    this.paymentHistoryRepository = new PaymentHistoryRepository();
-    this.reservationFactory = new ReservationFactory();
-    this.discountStrategy = new NoDiscount();
-    this.reservationNotifier = new ReservationNotifier();
-    this.reservationNotifier.addObserver(new EmailNotifier());
+    this.reservationRepository = reservationRepository;
+    this.caravanRepository = caravanRepository;
+    this.paymentHistoryRepository = paymentHistoryRepository;
+    this.reservationFactory = reservationFactory;
+    this.discountStrategy = discountStrategy;
+    this.reservationNotifier = reservationNotifier;
+    this.reservationNotifier.addObserver(emailNotifier);
   }
 
   _calculateTotalPrice(startDate, endDate, dailyRate) {
@@ -39,15 +48,6 @@ class ReservationService {
     // 1. Double-booking validation
     await this.reservationValidator.validate(caravan, startDate, endDate);
 
-    const overlapping = await this.reservationRepository.findOverlapping(
-      caravan,
-      startDate,
-      endDate,
-    );
-    if (overlapping.length > 0) {
-      throw new ConflictError("The selected dates are no longer available.");
-    }
-
     const caravanToBook = await this.caravanRepository.findById(caravan);
     const totalPrice = this._calculateTotalPrice(
       startDate,
@@ -55,47 +55,32 @@ class ReservationService {
       caravanToBook.dailyRate,
     );
 
-    // 2. Transaction
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    try {
-      // 3. Create Reservation
-      const newReservationData = {
-        guest: userId,
-        caravan,
-        startDate,
-        endDate,
-        totalPrice,
-        status: "confirmed", // Auto-confirm on payment
-      };
-      const reservation = this.reservationFactory.create(newReservationData);
-      const savedReservation = await this.reservationRepository.create(
-        reservation,
-        session,
-      );
+    // Create Reservation
+    const newReservationData = {
+      guest: userId,
+      caravan,
+      startDate,
+      endDate,
+      totalPrice,
+      status: "pending", // Wait for host approval
+    };
+    const reservation = this.reservationFactory.create(newReservationData);
+    const savedReservation = await this.reservationRepository.create(
+      reservation
+    );
 
-      // 4. Create Payment History
-      const paymentHistoryData = {
-        user: userId,
-        reservation: savedReservation._id,
-        amount: totalPrice,
-        transactionId,
-        status: "succeeded",
-      };
-      await this.paymentHistoryRepository.create(paymentHistoryData, session);
+    // Create Payment History
+    const paymentHistoryData = {
+      user: userId,
+      reservation: savedReservation._id,
+      amount: totalPrice,
+      transactionId,
+      status: "succeeded",
+    };
+    await this.paymentHistoryRepository.create(paymentHistoryData);
 
-      // 5. Commit transaction
-      await session.commitTransaction();
-
-      this.reservationNotifier.notify(savedReservation);
-      return savedReservation;
-    } catch (error) {
-      // 6. Abort transaction
-      await session.abortTransaction();
-      throw error; // Re-throw the error to be handled by the controller
-    } finally {
-      session.endSession();
-    }
+    this.reservationNotifier.notify(savedReservation);
+    return savedReservation;
   }
 
   async getReservationsForUser(userId) {

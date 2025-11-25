@@ -10,7 +10,7 @@ class ReservationValidator {
   async validate(caravanId, startDate, endDate) {
     await this.validateCaravanExists(caravanId);
     this.validateDates(startDate, endDate);
-    this.validateAvailability(caravanId, startDate, endDate);
+    await this.validateAvailability(caravanId, startDate, endDate);
   }
 
   async validateCaravanExists(caravanId) {
@@ -26,15 +26,15 @@ class ReservationValidator {
     }
   }
 
-  validateAvailability(caravanId, startDate, endDate) {
+  async validateAvailability(caravanId, startDate, endDate) {
     const existingReservation =
-      this.reservationRepository.findOverlappingReservation(
+      await this.reservationRepository.findOverlapping(
         caravanId,
         startDate,
         endDate,
       );
 
-    if (existingReservation) {
+    if (existingReservation && existingReservation.length > 0) {
       throw new ValidationError(
         "Caravan is not available for the selected dates",
       );

@@ -9,7 +9,7 @@ const CaravanList = () => {
     const fetchCaravans = async () => {
       try {
         // The proxy in vite.config.js will handle the full URL
-        const res = await api.get("/caravans");
+        const res = await api.get("/api/caravans");
         setCaravans(res.data);
       } catch (err) {
         console.error("Error fetching caravans:", err);

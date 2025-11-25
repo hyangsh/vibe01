@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const container = require("../core/bootstrap");
 const auth = require("../middleware/auth");
-const auth = require("../middleware/auth");
 const UserService = container.resolve("userService");
 
 // @route   GET api/users/me

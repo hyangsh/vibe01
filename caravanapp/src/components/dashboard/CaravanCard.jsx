@@ -60,5 +60,3 @@ const CaravanCard = ({ caravan, onOpenCalendar, onEdit }) => {
 };
 
 export default CaravanCard;
-
-export default CaravanCard;

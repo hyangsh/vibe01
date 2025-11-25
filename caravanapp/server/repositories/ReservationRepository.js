@@ -30,7 +30,7 @@ class ReservationRepository {
   }
 
   async findByUserId(userId) {
-    return await Reservation.find({ user: userId });
+    return await Reservation.find({ guest: userId }).populate("caravan", "name photos");
   }
 
   async update(id, reservationData) {
@@ -46,22 +46,9 @@ class ReservationRepository {
   async findOverlapping(caravanId, startDate, endDate) {
     const query = {
       caravan: caravanId,
-      status: "confirmed", // Only check against confirmed bookings
-      $or: [
-        {
-          // Case 1: Existing booking starts during the new booking
-          startDate: { $lt: endDate, $gte: startDate },
-        },
-        {
-          // Case 2: Existing booking ends during the new booking
-          endDate: { $lte: endDate, $gt: startDate },
-        },
-        {
-          // Case 3: Existing booking envelops the new booking
-          startDate: { $lte: startDate },
-          endDate: { $gte: endDate },
-        },
-      ],
+      status: { $in: ["approved", "pending"] }, // Check against both approved and pending bookings
+      startDate: { $lt: endDate },
+      endDate: { $gt: startDate },
     };
     return await Reservation.find(query);
   }

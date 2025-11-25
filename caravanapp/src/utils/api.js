@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "/api", // The proxy in vite.config.js will handle this
+  baseURL: "", // The proxy in vite.config.js will handle this
   headers: {
     "Content-Type": "application/json",
   },
@@ -24,15 +24,15 @@ api.interceptors.request.use(
   },
 );
 
-export const getDashboardSummary = () => api.get("/dashboard/summary");
+export const getDashboardSummary = () => api.get("/api/dashboard/summary");
 
 // Messaging
-export const getConversations = () => api.get("/messaging");
-export const getMessages = (conversationId) => api.get(`/messaging/${conversationId}/messages`);
-export const sendMessage = (conversationId, text) => api.post(`/messaging/${conversationId}/messages`, { text });
-export const findOrCreateConversation = (reservationId) => api.post(`/messaging/reservations/${reservationId}`);
+export const getConversations = () => api.get("/api/messaging");
+export const getMessages = (conversationId) => api.get(`/api/messaging/${conversationId}/messages`);
+export const sendMessage = (conversationId, text) => api.post(`/api/messaging/${conversationId}/messages`, { text });
+export const findOrCreateConversation = (reservationId) => api.post(`/api/messaging/reservations/${reservationId}`);
 
 // User
-export const getMe = () => api.get("/users/me");
+export const getMe = () => api.get("/api/users/me");
 
 export default api;

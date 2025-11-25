@@ -11,7 +11,7 @@ const CaravanDetails = () => {
   useEffect(() => {
     const fetchCaravan = async () => {
       try {
-        const res = await api.get(`/caravans/${id}`);
+        const res = await api.get(`/api/caravans/${id}`);
         setCaravan(res.data);
       } catch (err) {
         console.error(err);
@@ -20,7 +20,7 @@ const CaravanDetails = () => {
     const fetchReviews = async () => {
       try {
         // Assuming this endpoint exists for fetching reviews for a caravan
-        const res = await api.get(`/reviews/caravan/${id}`);
+        const res = await api.get(`/api/reviews/caravan/${id}`);
         setReviews(res.data);
       } catch (err) {
         console.error("Could not fetch reviews for this caravan.", err);
@@ -59,7 +59,7 @@ const CaravanDetails = () => {
             <div>
               <h3 className="font-semibold mb-2">Amenities:</h3>
               <ul className="list-disc list-inside grid grid-cols-2 gap-2">
-                {caravan.amenities.map((item) => (
+                {(caravan.amenities || []).map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>

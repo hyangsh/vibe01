@@ -21,7 +21,7 @@ const Login = () => {
     setError("");
     setLoading(true);
     try {
-      const res = await api.post("/users/login", formData);
+      const res = await api.post("/api/users/login", formData);
       const { token } = res.data;
 
       localStorage.setItem("token", token);

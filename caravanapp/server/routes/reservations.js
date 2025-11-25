@@ -20,10 +20,11 @@ router.post("/", auth, async (req, res) => {
     );
     res.status(201).json(reservation);
   } catch (err) {
+    console.error("Error creating reservation:", err);
     if (err.name === "ConflictError") {
       return res.status(409).json({ msg: err.message });
     }
-    res.status(400).json({ msg: err.message });
+    res.status(400).json({ msg: err.message, name: err.name, stack: err.stack });
   }
 });
 

@@ -17,8 +17,8 @@ const MyCaravansView = () => {
     try {
       setLoading(true);
       const [caravansRes, reservationsRes] = await Promise.all([
-        api.get("/caravans/my-caravans"),
-        api.get("/reservations/host"),
+        api.get("/api/caravans/my-caravans"),
+        api.get("/api/reservations/host"),
       ]);
       setCaravans(caravansRes.data);
       setReservations(reservationsRes.data);
@@ -113,7 +113,5 @@ const MyCaravansView = () => {
     </div>
   );
 };
-
-export default MyCaravansView;
 
 export default MyCaravansView;

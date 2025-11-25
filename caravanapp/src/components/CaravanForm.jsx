@@ -41,9 +41,9 @@ const CaravanForm = ({ caravan, onSave }) => {
 
     try {
       if (caravan) {
-        await api.put(`/caravans/${caravan._id}`, dataToSave);
+        await api.put(`/api/caravans/${caravan._id}`, dataToSave);
       } else {
-        await api.post("/caravans", dataToSave);
+        await api.post("/api/caravans", dataToSave);
       }
       onSave();
     } catch (err) {

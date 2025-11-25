@@ -17,9 +17,9 @@ const BookingWidget = ({ caravan }) => {
   useEffect(() => {
     const fetchBookedDates = async () => {
       try {
-        const res = await api.get(`/reservations/caravan/${caravan._id}`);
+        const res = await api.get(`/api/reservations/caravan/${caravan._id}`);
         const dates = res.data.flatMap((reservation) => {
-          if (reservation.status !== "confirmed") return [];
+          if (reservation.status !== "approved") return [];
           const start = new Date(reservation.startDate);
           const end = new Date(reservation.endDate);
           const dateArr = [];
@@ -101,7 +101,7 @@ const BookingWidget = ({ caravan }) => {
       };
 
       // The interceptor will add the token, so no need for manual config
-      const res = await api.post("/reservations", reservationBody);
+      const res = await api.post("/api/reservations", reservationBody);
 
       // 3. Redirect to confirmation page
       navigate("/booking-confirmation", {

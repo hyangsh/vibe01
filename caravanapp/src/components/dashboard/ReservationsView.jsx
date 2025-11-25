@@ -39,7 +39,7 @@ const ReservationsView = () => {
 
   const filteredReservations = reservations.filter((r) => {
     if (activeTab === "pending") return r.status === "pending";
-    if (activeTab === "active") return r.status === "confirmed";
+    if (activeTab === "active") return r.status === "approved";
     if (activeTab === "history")
       return ["completed", "cancelled"].includes(r.status);
     return true;
@@ -77,7 +77,7 @@ const ReservationsView = () => {
       ) : (
         <ReservationsTable
           reservations={filteredReservations}
-          onAccept={(id) => handleUpdateStatus(id, "confirmed")}
+          onAccept={(id) => handleUpdateStatus(id, "approved")}
           onReject={(id) => handleUpdateStatus(id, "cancelled")}
         />
       )}
