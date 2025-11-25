@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import api from "../../utils/api";
+import api, { findOrCreateConversation } from "../../utils/api";
 import ReservationsTable from "./ReservationsTable";
 
-const ReservationsView = () => {
+const ReservationsView = ({ onStartChat }) => {
   const [reservations, setReservations] = useState([]);
   const [activeTab, setActiveTab] = useState("pending");
   const [loading, setLoading] = useState(true);
@@ -34,6 +34,16 @@ const ReservationsView = () => {
     } catch (err) {
         setError("Failed to update reservation status.");
         console.error('Error updating status:', err);
+    }
+  };
+  
+  const handleStartChat = async (reservationId) => {
+    try {
+        const { data: conversation } = await findOrCreateConversation(reservationId);
+        onStartChat(conversation._id);
+    } catch (err) {
+        setError("Could not start chat.");
+        console.error("Could not start chat", err);
     }
   };
 
@@ -79,6 +89,7 @@ const ReservationsView = () => {
           reservations={filteredReservations}
           onAccept={(id) => handleUpdateStatus(id, "approved")}
           onReject={(id) => handleUpdateStatus(id, "cancelled")}
+          onStartChat={handleStartChat}
         />
       )}
     </div>

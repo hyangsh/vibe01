@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "./dashboard/Sidebar";
 import Header from "./dashboard/Header";
 import OverviewView from "./dashboard/OverviewView";
 import MyCaravansView from "./dashboard/MyCaravansView";
 import ReservationsView from "./dashboard/ReservationsView";
-import MessagingView from "./dashboard/MessagingView"; // Import the new view
+import MessagingView from "./dashboard/MessagingView";
 
 const PlaceholderView = ({ title }) => (
   <div>
@@ -19,6 +20,26 @@ const PlaceholderView = ({ title }) => (
 
 const HostDashboard = () => {
   const [activeView, setActiveView] = useState("Overview");
+  const [preselectedConversationId, setPreselectedConversationId] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const view = queryParams.get("view");
+    const conversationId = queryParams.get("conversationId");
+
+    if (view) {
+      setActiveView(view);
+    }
+    if (conversationId) {
+      setPreselectedConversationId(conversationId);
+    }
+  }, [location.search]);
+  
+  const navigateToMessage = (conversationId) => {
+    navigate(`/host-dashboard?view=Messaging&conversationId=${conversationId}`);
+  };
 
   const renderView = () => {
     switch (activeView) {
@@ -27,9 +48,9 @@ const HostDashboard = () => {
       case "My Caravans":
         return <MyCaravansView />;
       case "Reservations":
-        return <ReservationsView />;
+        return <ReservationsView onStartChat={navigateToMessage} />;
       case "Messaging":
-        return <MessagingView />; // Render the new component
+        return <MessagingView preselectedConversationId={preselectedConversationId} />;
       case "Maintenance Log":
         return <PlaceholderView title="Maintenance Log" />;
       case "Settings":

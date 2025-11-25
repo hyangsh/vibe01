@@ -24,7 +24,7 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const ReservationsTable = ({ reservations, onAccept, onReject }) => {
+const ReservationsTable = ({ reservations, onAccept, onReject, onStartChat }) => {
   return (
     <div className="bg-white shadow rounded-lg overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
@@ -109,7 +109,10 @@ const ReservationsTable = ({ reservations, onAccept, onReject }) => {
                     <button className="text-indigo-600 hover:text-indigo-900">
                       <EyeIcon className="w-5 h-5" />
                     </button>
-                    <button className="text-indigo-600 hover:text-indigo-900">
+                    <button
+                      onClick={() => onStartChat(reservation._id)}
+                      className="text-indigo-600 hover:text-indigo-900"
+                    >
                       <ChatBubbleLeftEllipsisIcon className="w-5 h-5" />
                     </button>
                   </>

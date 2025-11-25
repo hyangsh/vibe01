@@ -3,10 +3,10 @@ import ConversationList from "./ConversationList";
 import ChatWindow from "./ChatWindow";
 import { getConversations, getMessages, sendMessage, getMe } from "../../utils/api";
 
-const MessagingView = () => {
+const MessagingView = ({ preselectedConversationId }) => {
   const [conversations, setConversations] = useState([]);
   const [messages, setMessages] = useState({}); // Store messages per conversationId
-  const [selectedConversationId, setSelectedConversationId] = useState(null);
+  const [selectedConversationId, setSelectedConversationId] = useState(preselectedConversationId || null);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,7 +23,7 @@ const MessagingView = () => {
         setConversations(convRes.data);
         setCurrentUser(userRes.data);
 
-        if (convRes.data.length > 0) {
+        if (convRes.data.length > 0 && !selectedConversationId) {
           setSelectedConversationId(convRes.data[0]._id);
         }
       } catch (err) {
@@ -35,6 +35,12 @@ const MessagingView = () => {
     };
     fetchInitialData();
   }, []);
+
+  useEffect(() => {
+    if (preselectedConversationId) {
+        setSelectedConversationId(preselectedConversationId);
+    }
+  }, [preselectedConversationId]);
 
   useEffect(() => {
     if (!selectedConversationId) return;
