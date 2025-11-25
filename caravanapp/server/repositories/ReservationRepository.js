@@ -9,14 +9,7 @@ class ReservationRepository {
   async findById(id) {
     return await Reservation.findById(id)
       .populate("guest", "name")
-      .populate({
-        path: "caravan",
-        select: "name host",
-        populate: {
-          path: "host",
-          select: "name"
-        }
-      });
+      .populate("caravan", "name host");
   }
 
   async findByCaravanId(caravanId) {

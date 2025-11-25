@@ -50,12 +50,11 @@ router.post("/:conversationId/messages", auth, async (req, res) => {
 // @access  Private
 router.post("/reservations/:reservationId", auth, async (req, res) => {
     try {
-        const conversation = await messagingService.findOrCreateConversationForReservation(req.params.reservationId, req.user.id);
-        res.json(conversation);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send("Server Error");
-    }
-});
+            const conversation = await messagingService.findOrCreateConversationForReservation(req.params.reservationId, req.user.id);
+            res.json(conversation);
+          } catch (err) {
+            console.error("Error in /reservations/:reservationId", err);
+            res.status(500).send("Server Error");
+          }});
 
 module.exports = router;
