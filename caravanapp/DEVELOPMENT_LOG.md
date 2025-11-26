@@ -192,3 +192,44 @@ Split View UI: 좌측은 필터링된 카라반 리스트(스크롤), 우측은 
 동적 마커 및 오토 줌: 리스트가 변경될 때마다 해당 카라반들의 좌표(lat, lng)에 마커를 생성하고, LatLngBounds를 사용하여 모든 마커가 보이도록 지도 중심과 확대 레벨 자동 조정 기능 설계.
 
 API 키 관리: 카카오 디벨로퍼스 앱 생성, JavaScript 키 발급, 플랫폼(도메인) 등록 절차 및 환경 변수(.env) 보안 설정 가이드 확보.
+## Phase 5: 기능 구현 및 버그 수정 (2025년 11월 26일)
+
+### 1. "Invalid Hook Call" 오류 해결
+
+-   **문제 진단:** `react-timeago` 라이브러리가 React 19와 호환되지 않아 발생하는 "Invalid Hook Call" 런타임 오류. `react-timeago`가 부모 프로젝트에 설치되어 `caravanapp` 프로젝트의 React 인스턴스와 충돌하는 문제도 발견.
+-   **해결 과정:**
+    -   `react-timeago`를 `caravanapp/package.json`으로 이동 및 `--legacy-peer-deps`를 사용하여 강제 설치 시도 (일시적 해결 불가).
+    -   최종적으로 `react-timeago` 라이브러리를 제거하고, `ConversationList.jsx`와 `ChatWindow.jsx`에서 네이티브 `Date` 객체의 `toLocaleTimeString()` 메서드를 사용하여 날짜/시간을 표시하도록 수정.
+
+### 2. 캐러밴 생성 기능 개선 (지역 선택 및 사진 업로드)
+
+-   **데이터 모델 업데이트:** `caravanapp/server/models/Caravan.js`에 `region`, `lat`, `lng` 필드 추가.
+-   **파일 업로드 백엔드 구현:**
+    -   `multer` 라이브러리 설치 (`caravanapp/server/package.json`).
+    -   `caravanapp/server/routes/caravans.js`의 `POST /` 라우트에 `multer` 미들웨어 추가하여 `multipart/form-data` 처리.
+    -   이미지 파일을 `caravanapp/public/images/caravans` 경로에 저장하고, 데이터베이스에는 `'/images/caravans/filename.jpg'` 형식의 URL 경로를 저장하도록 로직 수정.
+    -   `caravanapp/server/server.js`에 `express.static` 미들웨어 추가하여 `public` 디렉토리의 정적 파일들을 클라이언트에서 접근할 수 있도록 설정.
+    -   `multer` 저장 경로 오류 (`500 Internal Server Error` 발생) 수정.
+    -   `caravanapp/server/routes/caravans.js`의 `router.get("/my-caravans", ...)` 라인에 발생한 `SyntaxError` (점(`.`) 오타) 수정.
+-   **프론트엔드 폼 구현:**
+    -   `caravanapp/src/components/CaravanForm.jsx`에 지역 선택 드롭다운 및 다중 파일 업로드 `<input type="file">` 필드 추가.
+    -   폼 제출 시 `FormData` 객체를 사용하여 이미지 파일 및 캐러밴 데이터를 백엔드로 전송하도록 수정.
+    -   `TypeError: onSave is not a function` 오류 해결을 위해 `caravanapp/src/App.jsx`에 `CaravanFormWrapper` 컴포넌트를 생성하여 `onSave` prop 전달.
+-   **신규 캐러밴 자동 위치 할당:** `caravanapp/server/services/CaravanService.js`의 `createCaravan` 메서드에, 선택된 `region`에 기반하여 더미 `lat`, `lng` 좌표를 자동으로 할당하는 로직 추가.
+
+### 3. 기존 캐러밴 데이터 연동 및 이미지 표시 문제 해결
+
+-   **`SearchByRegion` 연동:** `caravanapp/src/components/SearchByRegion.jsx`가 `dummyCaravans` 대신 API를 통해 실제 캐러밴 데이터를 가져오도록 수정.
+-   **기존 캐러밴 데이터 업데이트 스크립트:** `caravanapp/server/updateCaravans.js` 스크립트를 생성 및 실행하여, 기존 데이터베이스의 캐러밴들에 무작위 `region` 및 `lat`/`lng` 좌표를 할당하고, `photos` 배열이 비어있을 경우 기본 이미지 파일을 할당.
+-   **목록/카드 뷰 이미지 URL 수정:** `SearchByRegion.jsx`, `CaravanList.jsx`에서 사용하는 `Card.jsx`, `caravanapp/src/components/dashboard/CaravanCard.jsx`에서 이미지 `src`에 `http://localhost:5000`을 명시적으로 붙여서 이미지를 올바르게 불러오도록 수정.
+-   **사진 확장자 불일치 수정:** `caravanapp/server/fixPhotoExtensions.js` 스크립트를 생성 및 실행하여, 특정 캐러밴의 `photos` 필드에 저장된 이미지 파일 확장자 (예: `.jpg` 대신 `.jpeg`)가 실제 파일과 일치하도록 데이터베이스 업데이트.
+
+### 4. 문서화 및 프로젝트 설정 강화
+
+-   **README.md 업데이트:** 프로젝트의 새로운 `README.md` 파일을 상세한 지침에 따라 생성.
+    -   프로젝트 소개, 핵심 기능, 기술 스택, 아키텍처 및 설계 원칙, 시작하기 가이드, 라이선스, 작성자 정보 포함.
+    -   대시보드 채팅 기능 및 위치 기반 검색 기능 관련 GIF 이미지 (700px 너비, 중앙 정렬) 및 설명 추가.
+    -   GIF 파일 경로 및 파일명(`admin.gif`, `guest.gif`) 불일치 문제 해결 및 `README.md` 수정.
+-   **환경 변수 보안 강화:**
+    -   `caravanapp/.gitignore` 파일에 `server/.env`를 추가하여 민감한 환경 변수 파일이 Git에 업로드되지 않도록 설정.
+    -   `caravanapp/server/.env.example` 파일을 생성하여 다른 개발자가 환경 변수를 설정할 때 참고할 수 있도록 가이드 제공.

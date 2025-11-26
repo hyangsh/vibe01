@@ -37,7 +37,7 @@ CaravanShare는 바로 이 지점에서 시작되었습니다.
     -   자신이 등록한 카라반 목록 및 관리 기능
     -   **게스트와의 실시간 채팅 기능:** 예약 승인 후, 대시보드 내에서 게스트와 실시간으로 소통하며 여행에 필요한 정보를 교환할 수 있습니다.
     <div align="center">
-      <img src="assets/dashboard_chat.gif" alt="호스트 채팅 기능" width="700px" />
+      <img src="src/assets/admin.gif" alt="Host Admin GIF" width="700px" />
       <br/>
       *<small>호스트가 예약을 승인하고 게스트와 실시간으로 소통하는 모습</small>*
     </div>
@@ -46,7 +46,7 @@ CaravanShare는 바로 이 지점에서 시작되었습니다.
     -   Kakao Maps API와 연동하여 카라반의 위치를 지도에 표시
     -   주요 권역별 필터링을 통해 원하는 지역의 카라반을 손쉽게 탐색하고 대여까지 진행할 수 있습니다.
     <div align="center">
-      <img src="assets/location_search.gif" alt="위치 기반 검색" width="700px" />
+      <img src="src/assets/guest.gif" alt="Guest Search GIF" width="700px" />
       <br/>
       *<small>게스트가 위치 기반 검색을 통해 캐러밴을 대여하는 모습</small>*
     </div>
@@ -136,8 +136,3 @@ CaravanShare는 단순한 MVP(Minimum Viable Product)를 넘어, 지속 가능�
 
 This project is licensed under the [BSD-3-Clause](LICENSE).
 
-## ✍️ 작성자 (Author)
-
--   **[Your Name]**
--   GitHub: [https://github.com/your-username](https://github.com/your-username)
--   Email: your-email@example.com
