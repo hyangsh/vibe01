@@ -7,7 +7,7 @@ const Card = ({ item }) => {
   // Use a placeholder image if no photos are available
   const imageUrl =
     photos && photos.length > 0
-      ? photos[0]
+      ? `http://localhost:5000${photos[0]}`
       : "https://via.placeholder.com/300x200";
 
   return (
@@ -31,3 +31,4 @@ const Card = ({ item }) => {
 };
 
 export default Card;
+

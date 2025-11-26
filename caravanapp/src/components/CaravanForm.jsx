@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from "react";
 import api from "../utils/api";
 
+const regionGroups = [
+  "서울/경기/인천",
+  "강릉/속초/양양",
+  "충주/단양/제천",
+  "포항/경주/대구",
+  "대전/세종/충남",
+  "광주/전북/전남",
+  "부산/울산/경남",
+  "제주",
+];
+
 const CaravanForm = ({ caravan, onSave }) => {
   const [formData, setFormData] = useState({
     name: "",
@@ -8,7 +19,9 @@ const CaravanForm = ({ caravan, onSave }) => {
     amenities: "",
     location: "",
     dailyRate: "",
+    region: regionGroups[0],
   });
+  const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -20,6 +33,7 @@ const CaravanForm = ({ caravan, onSave }) => {
         amenities: caravan.amenities.join(", "),
         location: caravan.location,
         dailyRate: caravan.dailyRate,
+        region: caravan.region,
       });
     }
   }, [caravan]);
@@ -29,21 +43,38 @@ const CaravanForm = ({ caravan, onSave }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handlePhotoChange = (e) => {
+    setPhotos(e.target.files);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const dataToSave = {
-      ...formData,
-      amenities: formData.amenities.split(",").map((s) => s.trim()),
-    };
+    const data = new FormData();
+    data.append("name", formData.name);
+    data.append("capacity", formData.capacity);
+    data.append("location", formData.location);
+    data.append("dailyRate", formData.dailyRate);
+    data.append("region", formData.region);
+    data.append("amenities", formData.amenities);
+
+    for (let i = 0; i < photos.length; i++) {
+      data.append("photos", photos[i]);
+    }
 
     try {
       if (caravan) {
-        await api.put(`/api/caravans/${caravan._id}`, dataToSave);
+        // Update logic would need to handle photos separately
+        // For now, focusing on creation
+        await api.put(`/api/caravans/${caravan._id}`, formData);
       } else {
-        await api.post("/api/caravans", dataToSave);
+        await api.post("/api/caravans", data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
       }
       onSave();
     } catch (err) {
@@ -64,6 +95,15 @@ const CaravanForm = ({ caravan, onSave }) => {
       </div>
 
       <div>
+        <label htmlFor="region" className="block text-sm font-medium text-gray-700">Region</label>
+        <select name="region" id="region" value={formData.region} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          {regionGroups.map(region => (
+            <option key={region} value={region}>{region}</option>
+          ))}
+        </select>
+      </div>
+
+      <div>
         <label htmlFor="capacity" className="block text-sm font-medium text-gray-700">Capacity</label>
         <input type="number" name="capacity" id="capacity" value={formData.capacity} onChange={handleChange} required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"/>
       </div>
@@ -81,6 +121,11 @@ const CaravanForm = ({ caravan, onSave }) => {
       <div>
         <label htmlFor="amenities" className="block text-sm font-medium text-gray-700">Amenities (comma-separated)</label>
         <input type="text" name="amenities" id="amenities" value={formData.amenities} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"/>
+      </div>
+
+      <div>
+        <label htmlFor="photos" className="block text-sm font-medium text-gray-700">Photos</label>
+        <input type="file" name="photos" id="photos" onChange={handlePhotoChange} multiple accept="image/*" className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100"/>
       </div>
 
       {error && <p className="text-red-500 text-sm">{error}</p>}

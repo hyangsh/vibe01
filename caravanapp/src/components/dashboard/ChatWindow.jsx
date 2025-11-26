@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
-import TimeAgo from "react-timeago";
 
 const ChatWindow = ({ conversation, messages, onSendMessage, currentUser }) => {
   const [inputText, setInputText] = useState("");
@@ -55,7 +54,7 @@ const ChatWindow = ({ conversation, messages, onSendMessage, currentUser }) => {
               <p
                 className={`text-xs mt-1 ${msg.sender === currentUser._id ? "text-indigo-200" : "text-gray-400"}`}
               >
-                <TimeAgo date={msg.createdAt} />
+                {new Date(msg.createdAt).toLocaleTimeString()}
               </p>
             </div>
           </div>

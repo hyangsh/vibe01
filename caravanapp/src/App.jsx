@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import Login from "./components/Login";
@@ -14,6 +14,14 @@ import BookingConfirmation from "./components/BookingConfirmation";
 import SearchByRegion from "./components/SearchByRegion";
 import "./App.css";
 
+const CaravanFormWrapper = () => {
+  const navigate = useNavigate();
+  const handleSave = () => {
+    navigate("/host-dashboard");
+  };
+  return <CaravanForm onSave={handleSave} />;
+};
+
 function App() {
   return (
     <Router>
@@ -25,7 +33,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/caravans" element={<CaravanList />} />
           <Route path="/caravans/:id" element={<CaravanDetails />} />
-          <Route path="/create-caravan" element={<CaravanForm />} />
+          <Route path="/create-caravan" element={<CaravanFormWrapper />} />
           <Route path="/reservations" element={<Reservations />} />
           <Route path="/host-dashboard" element={<HostDashboard />} />
           <Route path="/profile" element={<Profile />} />

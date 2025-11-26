@@ -19,7 +19,7 @@ const CaravanCard = ({ caravan, onOpenCalendar, onEdit }) => {
 
   const imageUrl =
     photos && photos.length > 0
-      ? photos[0]
+      ? `http://localhost:5000${photos[0]}`
       : "https://via.placeholder.com/400x225";
 
   return (

@@ -10,6 +10,10 @@ const CaravanSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  region: {
+    type: String,
+    required: true,
+  },
   capacity: {
     type: Number,
     required: true,
@@ -19,6 +23,12 @@ const CaravanSchema = new mongoose.Schema({
   location: {
     type: String,
     required: true,
+  },
+  lat: {
+    type: Number,
+  },
+  lng: {
+    type: Number,
   },
   status: {
     type: String,

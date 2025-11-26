@@ -3,16 +3,53 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const container = require("../core/bootstrap");
 const CaravanService = container.resolve("caravanService");
+const multer = require("multer");
+const path = require("path");
+
+// Multer storage configuration
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "../../public/images/caravans/"));
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+// File filter for images
+const fileFilter = (req, file, cb) => {
+  const allowedFileTypes = /jpeg|jpg|png|gif/;
+  const extension = allowedFileTypes.test(
+    path.extname(file.originalname).toLowerCase(),
+  );
+  const mimeType = allowedFileTypes.test(file.mimetype);
+  if (extension && mimeType) {
+    cb(null, true);
+  } else {
+    cb("Error: Images Only!");
+  }
+};
+
+// Multer upload instance
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+});
 
 // @route   POST api/caravans
 // @desc    Create a new caravan
 // @access  Private (Host only)
-router.post("/", auth, async (req, res) => {
+router.post("/", auth, upload.array("photos", 10), async (req, res) => {
   try {
-    const caravan = await CaravanService.createCaravan(req.user.id, req.body);
+    const photoPaths = req.files.map((file) => `/images/caravans/${file.filename}`);
+    const caravanData = {
+      ...req.body,
+      photos: photoPaths,
+    };
+    const caravan = await CaravanService.createCaravan(req.user.id, caravanData);
     res.json(caravan);
   } catch (err) {
-    res.status(400).json({ msg: err.message });
+    res.status(500).json({ msg: err.message });
   }
 });
 
@@ -100,3 +137,4 @@ router.delete("/:id", auth, async (req, res) => {
 });
 
 module.exports = router;
+

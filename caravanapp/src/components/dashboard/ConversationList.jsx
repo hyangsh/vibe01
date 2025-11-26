@@ -1,5 +1,4 @@
 import React from "react";
-import TimeAgo from 'react-timeago';
 
 const ConversationList = ({
   conversations,
@@ -35,7 +34,7 @@ const ConversationList = ({
                       </h3>
                       {convo.lastMessage && (
                         <p className="text-xs text-gray-500 flex-shrink-0 ml-2">
-                            <TimeAgo date={convo.lastMessage.createdAt} />
+                          {new Date(convo.lastMessage.createdAt).toLocaleTimeString()}
                         </p>
                       )}
                     </div>

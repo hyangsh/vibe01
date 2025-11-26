@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { dummyCaravans } from "./dashboard/data";
+import api from "../utils/api";
 import Map from "./Map";
 
 const regionGroups = [
@@ -21,13 +21,13 @@ const CaravanListItem = ({ caravan, onMouseEnter, onMouseLeave }) => (
     onMouseLeave={onMouseLeave}
   >
     <img
-      src={caravan.image}
+      src={`http://localhost:5000${caravan.photos[0]}`}
       alt={caravan.name}
       className="w-24 h-16 object-cover rounded-md"
     />
     <div>
       <h4 className="font-bold text-gray-800">{caravan.name}</h4>
-      <p className="text-sm text-gray-600">${caravan.price} / night</p>
+      <p className="text-sm text-gray-600">${caravan.dailyRate} / night</p>
     </div>
   </div>
 );
@@ -35,10 +35,23 @@ const CaravanListItem = ({ caravan, onMouseEnter, onMouseLeave }) => (
 const SearchByRegion = () => {
   const [selectedRegion, setSelectedRegion] = useState(regionGroups[0]);
   const [hoveredCaravanId, setHoveredCaravanId] = useState(null);
+  const [caravans, setCaravans] = useState([]);
+
+  useEffect(() => {
+    const fetchCaravans = async () => {
+      try {
+        const response = await api.get("/api/caravans");
+        setCaravans(response.data);
+      } catch (error) {
+        console.error("Error fetching caravans:", error);
+      }
+    };
+    fetchCaravans();
+  }, []);
 
   const filteredCaravans = useMemo(
-    () => dummyCaravans.filter((c) => c.regionCategory === selectedRegion),
-    [selectedRegion],
+    () => caravans.filter((c) => c.region === selectedRegion),
+    [selectedRegion, caravans],
   );
 
   return (
@@ -72,10 +85,10 @@ const SearchByRegion = () => {
           <div className="space-y-4">
             {filteredCaravans.length > 0 ? (
               filteredCaravans.map((caravan) => (
-                <Link to={`/caravans/${caravan.id}`} key={caravan.id}>
+                <Link to={`/caravans/${caravan._id}`} key={caravan._id}>
                   <CaravanListItem
                     caravan={caravan}
-                    onMouseEnter={() => setHoveredCaravanId(caravan.id)}
+                    onMouseEnter={() => setHoveredCaravanId(caravan._id)}
                     onMouseLeave={() => setHoveredCaravanId(null)}
                   />
                 </Link>
@@ -101,3 +114,4 @@ const SearchByRegion = () => {
 };
 
 export default SearchByRegion;
+
