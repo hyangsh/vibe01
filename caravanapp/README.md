@@ -35,10 +35,21 @@ CaravanShare는 바로 이 지점에서 시작되었습니다.
 -   **📊 호스트 대시보드 (Host Dashboard)**
     -   예약 현황, 월별 수익 등 핵심 지표를 시각화한 차트 제공
     -   자신이 등록한 카라반 목록 및 관리 기능
+    -   **게스트와의 실시간 채팅 기능:** 예약 승인 후, 대시보드 내에서 게스트와 실시간으로 소통하며 여행에 필요한 정보를 교환할 수 있습니다.
+    <div align="center">
+      <img src="assets/dashboard_chat.gif" alt="호스트 채팅 기능" width="700px" />
+      <br/>
+      *<small>호스트가 예약을 승인하고 게스트와 실시간으로 소통하는 모습</small>*
+    </div>
 
 -   **🗺️ 위치 기반 검색 (Location-Based Search)**
     -   Kakao Maps API와 연동하여 카라반의 위치를 지도에 표시
-    -   주요 권역별 필터링을 통해 원하는 지역의 카라반을 손쉽게 탐색
+    -   주요 권역별 필터링을 통해 원하는 지역의 카라반을 손쉽게 탐색하고 대여까지 진행할 수 있습니다.
+    <div align="center">
+      <img src="assets/location_search.gif" alt="위치 기반 검색" width="700px" />
+      <br/>
+      *<small>게스트가 위치 기반 검색을 통해 캐러밴을 대여하는 모습</small>*
+    </div>
 
 ## 💻 기술 스택 (Tech Stack)
 
